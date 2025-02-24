@@ -1,0 +1,6 @@
+strings:
+  inputs:
+    - Bookie/en.lproj
+  outputs:
+    - templateName: structured-swift5
+      output: Bookie/Generated/Strings.swift

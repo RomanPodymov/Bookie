@@ -1,0 +1,40 @@
+name: Bookie
+options:
+  bundleIdPrefix: com.bookie
+  deploymentTarget:
+    iOS: 13.0
+  xcodeVersion: "16.2"
+packages:
+  Fashion:
+    url: https://github.com/vadymmarkov/Fashion
+    version: 4.2.0
+  Swinject:
+    url: https://github.com/Swinject/Swinject.git
+    version: 2.8.1
+targets:
+  BookieApp:
+    settings:
+      base:
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: ${SWIFT_ACTIVE_COMPILATION_CONDITIONS}
+    type: application
+    platform: iOS
+    sources: [Bookie]
+    dependencies:
+      - package: Fashion
+      - package: Swinject
+    info:
+      path: Bookie/Info.plist
+    preBuildScripts:
+      - script: "mint run swiftgen"
+        name: SwiftGen
+    postCompileScripts:
+      - script: "mint run swiftformat . --swiftversion 5.5"
+        name: SwiftFormat
+      - script: "mint run swiftlint"
+        name: SwiftLint
+  BookieAppTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources: [BookieTests]
+    info:
+      path: BookieTests/Info.plist
