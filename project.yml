@@ -11,6 +11,9 @@ packages:
   Swinject:
     url: https://github.com/Swinject/Swinject.git
     version: 2.8.1
+  Moya:
+    url: https://github.com/Moya/Moya
+    version: 15.0.3
 targets:
   BookieApp:
     settings:
@@ -22,6 +25,7 @@ targets:
     dependencies:
       - package: Fashion
       - package: Swinject
+      - package: Moya
     info:
       path: Bookie/Info.plist
     preBuildScripts:

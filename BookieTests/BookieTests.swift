@@ -9,6 +9,4 @@
 @testable import BookieApp
 import XCTest
 
-class BookieTests: XCTest {
-
-}
+class BookieTests: XCTest {}
