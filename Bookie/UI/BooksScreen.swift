@@ -7,110 +7,43 @@
 //
 
 import Moya
+import Then
 import UIKit
+import SnapKit
 
-// Root structure of the response
-struct BookResponse: Codable {
-    let kind: String
-    let totalItems: Int
-    let items: [Book]
+extension BooksScreen: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        1000
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        UICollectionViewCell()
+    }
 }
 
-// Representation of a single book
-struct Book: Codable {
-    let kind: String
-    let id: String
-    let etag: String
-    let volumeInfo: VolumeInfo
-    let saleInfo: SaleInfo?
-    let accessInfo: AccessInfo?
-    let searchInfo: SearchInfo?
-}
-
-// Volume information related to the book
-struct VolumeInfo: Codable {
-    let title: String
-    let authors: [String]?
-    let publisher: String?
-    let publishedDate: String?
-    let description: String?
-    let industryIdentifiers: [IndustryIdentifier]?
-    let pageCount: Int?
-    let printType: String?
-    let categories: [String]?
-    let averageRating: Double?
-    let ratingsCount: Int?
-    let imageLinks: ImageLinks?
-    let language: String?
-}
-
-// Identifier for the book, like ISBN
-struct IndustryIdentifier: Codable {
-    let type: String
-    let identifier: String
-}
-
-// Image links for the book (cover image)
-struct ImageLinks: Codable {
-    let smallThumbnail: String?
-    let thumbnail: String?
-    let small: String?
-    let medium: String?
-    let large: String?
-    let extraLarge: String?
-}
-
-// Sale information, including availability and price (if available)
-struct SaleInfo: Codable {
-    let country: String?
-    let saleability: String?
-    let isEbook: Bool?
-    let price: Price?
-}
-
-// Pricing information for the book
-struct Price: Codable {
-    let amount: Double
-    let currencyCode: String
-}
-
-// Access information for the book (such as permissions to view the book)
-struct AccessInfo: Codable {
-    let country: String
-    let viewability: String
-    let embeddable: Bool
-    let publicDomain: Bool
-    let textToSpeechPermission: String
-    let epub: Epub?
-    let pdf: PDF?
-    let webReaderLink: String
-}
-
-// Epub-specific access information
-struct Epub: Codable {
-    let isAvailable: Bool
-    let acsTokenLink: String?
-}
-
-// PDF-specific access information
-struct PDF: Codable {
-    let isAvailable: Bool
-    let acsTokenLink: String?
-}
-
-// Search information, such as a snippet from the book
-struct SearchInfo: Codable {
-    let textSnippet: String?
+extension BooksScreen: UICollectionViewDelegate {
+    
 }
 
 final class BooksScreen: UIViewController {
+    private unowned var rootView: UICollectionView!
+
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        rootView = UICollectionView().then {
+            $0.dataSource = self
+            $0.delegate = self
+            view.addSubview($0)
+            $0.snp.makeConstraints { make in
+                make.edges.equalToSuperview()
+            }
+        }
 
         view.backgroundColor = .green
 
         let provider = MoyaProvider<BooksService>()
-        provider.request(.volumes) { result in
+        provider.request(.volumes(query: "flowers")) { result in
             switch result {
             case let .success(response):
                 do {
@@ -129,16 +62,16 @@ final class BooksScreen: UIViewController {
 }
 
 enum BooksService {
-    case volumes
+    case volumes(query: String)
 }
 
 extension BooksService: TargetType {
     var baseURL: URL {
-        URL(string: "https://www.googleapis.com/books/v1/volumes?q=flowers")!
+        URL(string: "https://www.googleapis.com")!
     }
 
     var path: String {
-        ""
+        "books/v1/volumes"
     }
 
     var method: Moya.Method {
@@ -146,7 +79,10 @@ extension BooksService: TargetType {
     }
 
     var task: Moya.Task {
-        .requestPlain
+        switch self {
+        case let .volumes(query):
+            .requestParameters(parameters: ["q": query], encoding: URLEncoding.queryString)
+        }
     }
 
     var headers: [String: String]? {
