@@ -7,22 +7,34 @@
 //
 
 import Moya
+import SnapKit
 import Then
 import UIKit
-import SnapKit
 
 extension BooksScreen: UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
         1000
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        UICollectionViewCell()
+        let result = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
+        result.backgroundColor = .yellow
+        return result
     }
 }
 
 extension BooksScreen: UICollectionViewDelegate {
-    
+    func collectionView(_: UICollectionView, didSelectItemAt _: IndexPath) {}
+}
+
+extension BooksScreen: UICollectionViewDelegateFlowLayout {
+    func collectionView(
+        _: UICollectionView,
+        layout _: UICollectionViewLayout,
+        sizeForItemAt _: IndexPath
+    ) -> CGSize {
+        .init(width: 200, height: 100)
+    }
 }
 
 final class BooksScreen: UIViewController {
@@ -31,9 +43,10 @@ final class BooksScreen: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        rootView = UICollectionView().then {
+        rootView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout()).then {
             $0.dataSource = self
             $0.delegate = self
+            $0.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "cell")
             view.addSubview($0)
             $0.snp.makeConstraints { make in
                 make.edges.equalToSuperview()
