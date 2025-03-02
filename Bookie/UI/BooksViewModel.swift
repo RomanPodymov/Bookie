@@ -6,6 +6,8 @@
 //  Copyright © 2025 Bookie. All rights reserved.
 //
 
+import Combine
+import CombineMoya
 import Foundation
 import Moya
 
@@ -19,22 +21,16 @@ class BooksViewModel {
         self.data = data
     }
 
-    func reloadData() {
+    func reloadData() async {
         let provider = MoyaProvider<BooksService>()
-        provider.request(.volumes(query: "flowers")) { [weak self] result in
-            switch result {
-            case let .success(response):
-                do {
-                    let books = try JSONDecoder().decode(BookResponse.self, from: response.data)
-                    self?.data = books
-                    self?.screen.onNewDataReceived()
-                } catch {
-                    print(error)
-                }
-            case .failure:
-                print("")
+        do {
+            guard let response = try await provider.requestPublisher(.volumes(query: "flowers")).values.first(where: { _ in true }) else {
+                return
             }
-        }
+            let books = try JSONDecoder().decode(BookResponse.self, from: response.data)
+            data = books
+            await screen?.onNewDataReceived()
+        } catch {}
     }
 }
 

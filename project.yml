@@ -2,7 +2,7 @@ name: Bookie
 options:
   bundleIdPrefix: com.bookie
   deploymentTarget:
-    iOS: 13.0
+    iOS: 15.0
   xcodeVersion: "16.2"
 packages:
   Fashion:
@@ -11,7 +11,7 @@ packages:
   Swinject:
     url: https://github.com/Swinject/Swinject.git
     version: 2.8.1
-  Moya:
+  CombineMoya:
     url: https://github.com/Moya/Moya
     version: 15.0.3
   Then:
@@ -30,6 +30,7 @@ targets:
   BookieApp:
     settings:
       base:
+        SWIFT_VERSION: 6
         SWIFT_ACTIVE_COMPILATION_CONDITIONS: ${SWIFT_ACTIVE_COMPILATION_CONDITIONS}
     type: application
     platform: iOS
@@ -37,13 +38,16 @@ targets:
     dependencies:
       - package: Fashion
       - package: Swinject
-      - package: Moya
+      - package: CombineMoya
       - package: Then
       - package: SnapKit
       - package: Kingfisher
       - package: SwifterSwift
     info:
       path: Bookie/Info.plist
+      properties:
+        NSAppTransportSecurity:
+          NSAllowsArbitraryLoads: YES
     preBuildScripts:
       - script: "mint run swiftgen"
         name: SwiftGen

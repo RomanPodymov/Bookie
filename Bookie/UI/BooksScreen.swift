@@ -84,10 +84,14 @@ final class BooksScreen: UIViewController {
 
         view.backgroundColor = .green
 
-        viewModel.reloadData()
+        Task { [weak viewModel] in
+            await viewModel?.reloadData()
+        }
     }
 
-    func onNewDataReceived() {
-        rootView.reloadData()
+    func onNewDataReceived() async {
+        await MainActor.run {
+            rootView.reloadData()
+        }
     }
 }
