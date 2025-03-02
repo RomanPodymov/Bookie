@@ -20,6 +20,12 @@ packages:
   SnapKit:
     url: https://github.com/SnapKit/SnapKit
     version: 5.7.1
+  Kingfisher:
+    url: https://github.com/onevcat/Kingfisher
+    version: 8.2.0
+  SwifterSwift:
+    url: https://github.com/SwifterSwift/SwifterSwift
+    version: 7.0.0
 targets:
   BookieApp:
     settings:
@@ -34,6 +40,8 @@ targets:
       - package: Moya
       - package: Then
       - package: SnapKit
+      - package: Kingfisher
+      - package: SwifterSwift
     info:
       path: Bookie/Info.plist
     preBuildScripts:

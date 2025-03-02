@@ -6,18 +6,45 @@
 //  Copyright © 2025 Bookie. All rights reserved.
 //
 
-import Moya
+import Kingfisher
 import SnapKit
+import SwifterSwift
 import Then
 import UIKit
 
-extension BooksScreen: UICollectionViewDataSource {
-    func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
-        1000
+class BookCell: UICollectionViewCell {
+    unowned var bookPhotoView: UIImageView!
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+
+        bookPhotoView = UIImageView().then {
+            contentView.addSubview($0)
+            $0.snp.makeConstraints { make in
+                make.edges.equalToSuperview()
+            }
+        }
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let result = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
+    required init?(coder _: NSCoder) {
+        nil
+    }
+}
+
+extension BooksScreen: UICollectionViewDataSource {
+    func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
+        viewModel.data?.items.count ?? 0
+    }
+
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
+        let result = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as? BookCell ?? .init()
+        let data = viewModel.data?.items.lazy.compactMap {
+            $0.volumeInfo.imageLinks?.thumbnail
+        }[safe: indexPath.item]
+        result.bookPhotoView.kf.setImage(with: URL(string: data ?? ""))
         result.backgroundColor = .yellow
         return result
     }
@@ -40,13 +67,15 @@ extension BooksScreen: UICollectionViewDelegateFlowLayout {
 final class BooksScreen: UIViewController {
     private unowned var rootView: UICollectionView!
 
+    private lazy var viewModel = BooksViewModel(screen: self)
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
         rootView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout()).then {
             $0.dataSource = self
             $0.delegate = self
-            $0.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "cell")
+            $0.register(BookCell.self, forCellWithReuseIdentifier: "cell")
             view.addSubview($0)
             $0.snp.makeConstraints { make in
                 make.edges.equalToSuperview()
@@ -55,50 +84,10 @@ final class BooksScreen: UIViewController {
 
         view.backgroundColor = .green
 
-        let provider = MoyaProvider<BooksService>()
-        provider.request(.volumes(query: "flowers")) { result in
-            switch result {
-            case let .success(response):
-                do {
-                    let books = try JSONDecoder().decode(BookResponse.self, from: response.data)
-                    for book in books.items {
-                        print(book.volumeInfo.description)
-                    }
-                } catch {
-                    print(error)
-                }
-            case .failure:
-                print("")
-            }
-        }
-    }
-}
-
-enum BooksService {
-    case volumes(query: String)
-}
-
-extension BooksService: TargetType {
-    var baseURL: URL {
-        URL(string: "https://www.googleapis.com")!
+        viewModel.reloadData()
     }
 
-    var path: String {
-        "books/v1/volumes"
-    }
-
-    var method: Moya.Method {
-        .get
-    }
-
-    var task: Moya.Task {
-        switch self {
-        case let .volumes(query):
-            .requestParameters(parameters: ["q": query], encoding: URLEncoding.queryString)
-        }
-    }
-
-    var headers: [String: String]? {
-        nil
+    func onNewDataReceived() {
+        rootView.reloadData()
     }
 }
