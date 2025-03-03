@@ -29,6 +29,9 @@ packages:
   Reusable:
     url: https://github.com/AliSoftware/Reusable
     version: 4.1.2
+  SHSearchBar:
+    url: https://github.com/Blackjacx/SHSearchBar
+    version: 2.1.0
 targets:
   BookieApp:
     settings:
@@ -47,6 +50,7 @@ targets:
       - package: Kingfisher
       - package: SwifterSwift
       - package: Reusable
+      - package: SHSearchBar
     info:
       path: Bookie/Info.plist
       properties:

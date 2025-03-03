@@ -8,6 +8,7 @@
 
 import Kingfisher
 import Reusable
+import SHSearchBar
 import SnapKit
 import SwifterSwift
 import SwiftUI
@@ -75,7 +76,7 @@ extension BooksScreen: AnyBooksScreen {
 }
 
 final class BooksScreen: UIViewController {
-    private unowned var searchBar: UISearchBar!
+    private unowned var searchBar: SHSearchBar!
     private unowned var rootView: UICollectionView!
 
     private lazy var viewModel = BooksViewModel(screen: self)
@@ -83,7 +84,7 @@ final class BooksScreen: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        searchBar = UISearchBar().then {
+        searchBar = SHSearchBar(config: .init()).then {
             $0.delegate = self
             view.addSubview($0)
             $0.snp.makeConstraints { make in
@@ -110,8 +111,8 @@ final class BooksScreen: UIViewController {
     }
 }
 
-extension BooksScreen: UISearchBarDelegate {
-    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+extension BooksScreen: @preconcurrency SHSearchBarDelegate {
+    func searchBar(_ searchBar: SHSearchBar, textDidChange _: String) {
         viewModel.searchText = searchBar.text
         Task { [weak viewModel] in
             await viewModel?.reloadData()
