@@ -17,6 +17,7 @@ import Then
 import UIKit
 
 final class BookScreen: UIViewController {
+    private unowned var backButton: UIButton!
     private unowned var bookImage: UIImageView!
 
     private var viewModel: BookViewModel!
@@ -40,6 +41,19 @@ final class BookScreen: UIViewController {
             }
         }
         bookImage.kf.setImage(with: .network(URL(string: viewModel.data!.volumeInfo.imageLinks!.thumbnail) ?? .init(unsafeString: "")))
+
+        backButton = .init().then {
+            $0.setTitleForAllStates("Back")
+            $0.addAction(.init(handler: { _ in
+                Task {
+                    await dependenciesContainer.resolve(AnyCoordinator.self)?.openHomeScren()
+                }
+            }), for: .primaryActionTriggered)
+            view.addSubview($0)
+            $0.snp.makeConstraints { make in
+                make.leading.top.equalToSuperview()
+            }
+        }
     }
 }
 

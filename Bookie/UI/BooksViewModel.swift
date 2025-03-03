@@ -32,7 +32,7 @@ class BooksViewModel {
     func reloadData() async {
         let provider = MoyaProvider<BooksService>()
         do {
-            guard let response = try await provider.requestPublisher(.volumes(query: searchText ?? "")).values.first(where: { _ in true }) else {
+            guard let response = try await provider.requestPublisher(.volumes(query: searchText)).values.first(where: { _ in true }) else {
                 return
             }
             let books = try JSONDecoder().decode(BookResponse.self, from: response.data)

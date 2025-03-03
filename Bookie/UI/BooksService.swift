@@ -10,7 +10,7 @@ import Foundation
 import Moya
 
 enum BooksService {
-    case volumes(query: String)
+    case volumes(query: String?)
 }
 
 extension BooksService: TargetType {
@@ -29,7 +29,8 @@ extension BooksService: TargetType {
     var task: Moya.Task {
         switch self {
         case let .volumes(query):
-            .requestParameters(parameters: ["q": query], encoding: URLEncoding.queryString)
+            let parameters = ["q": query].compactMapValues { $0.map { $0 + "+inauthor" } }
+            return .requestParameters(parameters: parameters, encoding: URLEncoding.queryString)
         }
     }
 
