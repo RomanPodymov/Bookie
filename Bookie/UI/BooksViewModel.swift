@@ -11,12 +11,16 @@ import CombineMoya
 import Foundation
 import Moya
 
+protocol AnyBooksScreen: AnyObject {
+    func onNewDataReceived() async
+}
+
 class BooksViewModel {
-    unowned var screen: BooksScreen!
+    unowned var screen: AnyBooksScreen!
 
     var data: BookResponse?
 
-    init(screen: BooksScreen!, data: BookResponse? = nil) {
+    init(screen: AnyBooksScreen!, data: BookResponse? = nil) {
         self.screen = screen
         self.data = data
     }

@@ -24,7 +24,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     private func setupWindow() {
         window = UIWindow(frame: UIScreen.main.bounds)
-        window?.rootViewController = BooksScreen()
+        window?.rootViewController = BooksScreenSwiftUI()
         window?.makeKeyAndVisible()
     }
 }

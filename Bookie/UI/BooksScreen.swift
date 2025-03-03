@@ -9,6 +9,7 @@
 import Kingfisher
 import SnapKit
 import SwifterSwift
+import SwiftUI
 import Then
 import UIKit
 
@@ -64,6 +65,32 @@ extension BooksScreen: UICollectionViewDelegateFlowLayout {
     }
 }
 
+extension BooksScreen: AnyBooksScreen {
+    func onNewDataReceived() async {
+        await MainActor.run {
+            rootView.reloadData()
+        }
+    }
+}
+
+struct BooksScreenRootView: View {
+    var body: some View {
+        Text("Hello")
+    }
+}
+
+final class BooksScreenSwiftUI: UIHostingController<BooksScreenRootView>, AnyBooksScreen {
+    init() {
+        super.init(rootView: BooksScreenRootView())
+    }
+
+    @MainActor @preconcurrency dynamic required init?(coder _: NSCoder) {
+        nil
+    }
+
+    func onNewDataReceived() async {}
+}
+
 final class BooksScreen: UIViewController {
     private unowned var rootView: UICollectionView!
 
@@ -86,12 +113,6 @@ final class BooksScreen: UIViewController {
 
         Task { [weak viewModel] in
             await viewModel?.reloadData()
-        }
-    }
-
-    func onNewDataReceived() async {
-        await MainActor.run {
-            rootView.reloadData()
         }
     }
 }
