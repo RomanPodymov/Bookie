@@ -21,5 +21,9 @@ class Coordinator: AnyCoordinator {
         }
     }
 
-    func openDetailScreen() {}
+    func openDetailScreen(book: Book) async {
+        await MainActor.run { [weak window] in
+            window?.rootViewController = BookScreen(book: book)
+        }
+    }
 }

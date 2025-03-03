@@ -55,7 +55,14 @@ extension BooksScreen: UICollectionViewDataSource {
 }
 
 extension BooksScreen: UICollectionViewDelegate {
-    func collectionView(_: UICollectionView, didSelectItemAt _: IndexPath) {}
+    func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        Task {
+            let data = viewModel.newSet.lazy.compactMap {
+                $0
+            }[safe: indexPath.item]
+            await dependenciesContainer.resolve(AnyCoordinator.self)?.openDetailScreen(book: data!)
+        }
+    }
 }
 
 extension BooksScreen: UICollectionViewDelegateFlowLayout {
@@ -71,8 +78,6 @@ extension BooksScreen: UICollectionViewDelegateFlowLayout {
 extension BooksScreen: AnyBooksScreen {
     func onNewDataReceived(oldSet: [Book], newSet: [Book]) async {
         await MainActor.run {
-            rootView.reloadData()
-
             rootView.reload(using: StagedChangeset(source: oldSet, target: newSet)) { [weak viewModel] collection in
                 viewModel?.newSet = collection
             }
@@ -89,7 +94,7 @@ final class BooksScreen: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        searchBar = SHSearchBar(config: .init()).then {
+        searchBar = .init(config: .init()).then {
             $0.delegate = self
             view.addSubview($0)
             $0.snp.makeConstraints { make in
@@ -97,7 +102,7 @@ final class BooksScreen: UIViewController {
             }
         }
 
-        rootView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout()).then {
+        rootView = .init(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout()).then {
             $0.dataSource = self
             $0.delegate = self
             $0.register(cellType: BookCell.self)
