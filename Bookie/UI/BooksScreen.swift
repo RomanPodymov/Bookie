@@ -74,25 +74,8 @@ extension BooksScreen: AnyBooksScreen {
     }
 }
 
-struct BooksScreenRootView: View {
-    var body: some View {
-        Text("Hello")
-    }
-}
-
-final class BooksScreenSwiftUI: UIHostingController<BooksScreenRootView>, AnyBooksScreen {
-    init() {
-        super.init(rootView: BooksScreenRootView())
-    }
-
-    @MainActor @preconcurrency dynamic required init?(coder _: NSCoder) {
-        nil
-    }
-
-    func onNewDataReceived() async {}
-}
-
 final class BooksScreen: UIViewController {
+    private unowned var searchBar: UISearchBar!
     private unowned var rootView: UICollectionView!
 
     private lazy var viewModel = BooksViewModel(screen: self)
@@ -100,18 +83,36 @@ final class BooksScreen: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        searchBar = UISearchBar().then {
+            $0.delegate = self
+            view.addSubview($0)
+            $0.snp.makeConstraints { make in
+                make.leading.top.trailing.equalToSuperview()
+            }
+        }
+
         rootView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout()).then {
             $0.dataSource = self
             $0.delegate = self
             $0.register(cellType: BookCell.self)
             view.addSubview($0)
             $0.snp.makeConstraints { make in
-                make.edges.equalToSuperview()
+                make.leading.bottom.trailing.equalToSuperview()
+                make.top.equalTo(searchBar.snp.bottom)
             }
         }
 
         view.backgroundColor = .green
 
+        Task { [weak viewModel] in
+            await viewModel?.reloadData()
+        }
+    }
+}
+
+extension BooksScreen: UISearchBarDelegate {
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+        viewModel.searchText = searchBar.text
         Task { [weak viewModel] in
             await viewModel?.reloadData()
         }

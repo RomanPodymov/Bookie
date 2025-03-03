@@ -17,7 +17,7 @@ protocol AnyCoordinator {
     func openDetailScreen() async
 }
 
-let container = {
+let dependenciesContainer = {
     let result = Container()
     result.register(AnyCoordinator.self) { _ in
         Coordinator()
@@ -39,10 +39,10 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     private func setupWindow() {
         window = UIWindow(frame: UIScreen.main.bounds).then {
-            container.resolve(AnyCoordinator.self)?.set(window: $0)
+            dependenciesContainer.resolve(AnyCoordinator.self)?.set(window: $0)
         }
         Task {
-            await container.resolve(AnyCoordinator.self)?.openHomeScren()
+            await dependenciesContainer.resolve(AnyCoordinator.self)?.openHomeScren()
             window?.makeKeyAndVisible()
         }
     }
