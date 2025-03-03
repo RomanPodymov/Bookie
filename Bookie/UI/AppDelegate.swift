@@ -43,6 +43,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         Task {
             await container.resolve(AnyCoordinator.self)?.openHomeScren()
+            window?.makeKeyAndVisible()
         }
     }
 }

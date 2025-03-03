@@ -18,7 +18,6 @@ class Coordinator: AnyCoordinator {
     func openHomeScren() async {
         await MainActor.run { [weak window] in
             window?.rootViewController = BooksScreen()
-            window?.makeKeyAndVisible()
         }
     }
 
