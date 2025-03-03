@@ -11,6 +11,12 @@ import Fashion
 import Then
 import UIKit
 
+protocol AnyCoordinator {
+    func set(window: UIWindow)
+    func openHomeScren() async
+    func openDetailScreen() async
+}
+
 let container = {
     let result = Container()
     result.register(AnyCoordinator.self) { _ in

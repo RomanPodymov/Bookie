@@ -26,6 +26,9 @@ packages:
   SwifterSwift:
     url: https://github.com/SwifterSwift/SwifterSwift
     version: 7.0.0
+  Reusable:
+    url: https://github.com/AliSoftware/Reusable
+    version: 4.1.2
 targets:
   BookieApp:
     settings:
@@ -43,6 +46,7 @@ targets:
       - package: SnapKit
       - package: Kingfisher
       - package: SwifterSwift
+      - package: Reusable
     info:
       path: Bookie/Info.plist
       properties:

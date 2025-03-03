@@ -7,13 +7,14 @@
 //
 
 import Kingfisher
+import Reusable
 import SnapKit
 import SwifterSwift
 import SwiftUI
 import Then
 import UIKit
 
-class BookCell: UICollectionViewCell {
+class BookCell: UICollectionViewCell, Reusable {
     unowned var bookPhotoView: UIImageView!
 
     override init(frame: CGRect) {
@@ -41,7 +42,7 @@ extension BooksScreen: UICollectionViewDataSource {
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
-        let result = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as? BookCell ?? .init()
+        let result = collectionView.dequeueReusableCell(for: indexPath, cellType: BookCell.self)
         let data = viewModel.data?.items.lazy.compactMap {
             $0.volumeInfo.imageLinks?.thumbnail
         }[safe: indexPath.item]
@@ -102,7 +103,7 @@ final class BooksScreen: UIViewController {
         rootView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout()).then {
             $0.dataSource = self
             $0.delegate = self
-            $0.register(BookCell.self, forCellWithReuseIdentifier: "cell")
+            $0.register(cellType: BookCell.self)
             view.addSubview($0)
             $0.snp.makeConstraints { make in
                 make.edges.equalToSuperview()

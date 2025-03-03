@@ -8,15 +8,8 @@
 
 import UIKit
 
-protocol AnyCoordinator {
-    // var window: UIWindow? { get set }
-    func set(window: UIWindow)
-    func openHomeScren() async
-    func openDetailScreen() async
-}
-
 class Coordinator: AnyCoordinator {
-    var window: UIWindow?
+    private var window: UIWindow?
 
     func set(window: UIWindow) {
         self.window = window
