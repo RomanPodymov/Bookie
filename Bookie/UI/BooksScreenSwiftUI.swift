@@ -19,6 +19,8 @@ struct BooksScreenRootView: View {
 }
 
 final class BooksScreenSwiftUI: UIHostingController<BooksScreenRootView>, AnyBooksScreen {
+    func onNewDataReceived(oldSet _: [Book], newSet _: [Book]) async {}
+
     init() {
         super.init(rootView: BooksScreenRootView())
     }

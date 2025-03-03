@@ -6,6 +6,7 @@
 //  Copyright © 2025 Bookie. All rights reserved.
 //
 
+import DifferenceKit
 import Kingfisher
 import Reusable
 import SHSearchBar
@@ -36,7 +37,7 @@ class BookCell: UICollectionViewCell, Reusable {
 
 extension BooksScreen: UICollectionViewDataSource {
     func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
-        viewModel.data?.items.count ?? 0
+        viewModel.newSet.count
     }
 
     func collectionView(
@@ -44,7 +45,7 @@ extension BooksScreen: UICollectionViewDataSource {
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
         let result = collectionView.dequeueReusableCell(for: indexPath, cellType: BookCell.self)
-        let data = viewModel.data?.items.lazy.compactMap {
+        let data = viewModel.newSet.lazy.compactMap {
             $0.volumeInfo.imageLinks?.thumbnail
         }[safe: indexPath.item]
         result.bookPhotoView.kf.setImage(with: URL(string: data ?? ""))
@@ -68,9 +69,13 @@ extension BooksScreen: UICollectionViewDelegateFlowLayout {
 }
 
 extension BooksScreen: AnyBooksScreen {
-    func onNewDataReceived() async {
+    func onNewDataReceived(oldSet: [Book], newSet: [Book]) async {
         await MainActor.run {
             rootView.reloadData()
+
+            rootView.reload(using: StagedChangeset(source: oldSet, target: newSet)) { [weak viewModel] collection in
+                viewModel?.newSet = collection
+            }
         }
     }
 }

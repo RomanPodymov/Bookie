@@ -8,18 +8,21 @@
 
 import Combine
 import CombineMoya
+import DifferenceKit
 import Foundation
 import Moya
 
 protocol AnyBooksScreen: AnyObject {
-    func onNewDataReceived() async
+    func onNewDataReceived(oldSet: [Book], newSet: [Book]) async
 }
 
 class BooksViewModel {
     unowned var screen: AnyBooksScreen!
 
     var searchText: String?
-    var data: BookResponse?
+    private var data: BookResponse?
+    var oldSet: [Book] = []
+    var newSet: [Book] = []
 
     init(screen: AnyBooksScreen!, data: BookResponse? = nil) {
         self.screen = screen
@@ -34,7 +37,19 @@ class BooksViewModel {
             }
             let books = try JSONDecoder().decode(BookResponse.self, from: response.data)
             data = books
-            await screen?.onNewDataReceived()
+            oldSet = newSet
+            let newSet = books.items
+            await screen?.onNewDataReceived(oldSet: oldSet, newSet: newSet)
         } catch {}
+    }
+}
+
+extension Book: Differentiable {
+    var differenceIdentifier: String {
+        id
+    }
+
+    func isContentEqual(to source: Book) -> Bool {
+        source.id == id
     }
 }
