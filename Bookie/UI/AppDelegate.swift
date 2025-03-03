@@ -7,8 +7,17 @@
 //
 
 import Fashion
-import Swinject
+@preconcurrency import Swinject
+import Then
 import UIKit
+
+let container = {
+    let result = Container()
+    result.register(AnyCoordinator.self) { _ in
+        Coordinator()
+    }.inObjectScope(.container)
+    return result
+}()
 
 @main
 final class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -23,8 +32,11 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     private func setupWindow() {
-        window = UIWindow(frame: UIScreen.main.bounds)
-        window?.rootViewController = BooksScreenSwiftUI()
-        window?.makeKeyAndVisible()
+        window = UIWindow(frame: UIScreen.main.bounds).then {
+            container.resolve(AnyCoordinator.self)?.set(window: $0)
+        }
+        Task {
+            await container.resolve(AnyCoordinator.self)?.openHomeScren()
+        }
     }
 }

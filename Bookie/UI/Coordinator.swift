@@ -6,8 +6,28 @@
 //  Copyright © 2025 Bookie. All rights reserved.
 //
 
-class Coordinator {
-    func openHomeScren() {}
+import UIKit
+
+protocol AnyCoordinator {
+    // var window: UIWindow? { get set }
+    func set(window: UIWindow)
+    func openHomeScren() async
+    func openDetailScreen() async
+}
+
+class Coordinator: AnyCoordinator {
+    var window: UIWindow?
+
+    func set(window: UIWindow) {
+        self.window = window
+    }
+
+    func openHomeScren() async {
+        await MainActor.run { [weak window] in
+            window?.rootViewController = BooksScreen()
+            window?.makeKeyAndVisible()
+        }
+    }
 
     func openDetailScreen() {}
 }

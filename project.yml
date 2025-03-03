@@ -10,7 +10,7 @@ packages:
     version: 4.2.0
   Swinject:
     url: https://github.com/Swinject/Swinject.git
-    version: 2.8.1
+    version: 2.9.1
   CombineMoya:
     url: https://github.com/Moya/Moya
     version: 15.0.3
