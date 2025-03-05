@@ -29,7 +29,7 @@ extension BooksService: TargetType {
     var task: Moya.Task {
         switch self {
         case let .volumes(query):
-            let parameters = ["q": query].compactMapValues { $0.map { $0 + "+inauthor" } }
+            let parameters = ["q": query.map { $0 + "+inauthor" } ?? "", "startIndex": 0, "maxResults": 10] as [String: Any]
             return .requestParameters(parameters: parameters, encoding: URLEncoding.queryString)
         }
     }

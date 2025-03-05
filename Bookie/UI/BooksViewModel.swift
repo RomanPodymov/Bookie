@@ -16,10 +16,16 @@ protocol AnyBooksScreen: AnyObject {
     func onNewDataReceived(oldSet: [Book], newSet: [Book]) async
 }
 
+enum BookLanguage: String {
+    case en
+    case cs
+}
+
 class BooksViewModel {
     unowned var screen: AnyBooksScreen!
 
-    var searchText: String?
+    var searchText: String? = "peter"
+    var allowedLanguages: [BookLanguage] = [.cs]
     private var data: BookResponse?
     var oldSet: [Book] = []
     var newSet: [Book] = []
@@ -38,7 +44,11 @@ class BooksViewModel {
             let books = try JSONDecoder().decode(BookResponse.self, from: response.data)
             data = books
             oldSet = newSet
-            let newSet = books.items
+            let newSet = books.items.filter { book in
+                allowedLanguages.contains(
+                    book.volumeInfo.language.flatMap { BookLanguage(rawValue: $0) } ?? .en
+                )
+            }
             await screen?.onNewDataReceived(oldSet: oldSet, newSet: newSet)
         } catch {}
     }
