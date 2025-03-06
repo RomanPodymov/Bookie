@@ -37,6 +37,10 @@ class BookCell: UICollectionViewCell, Reusable {
 
 extension BooksScreen: UICollectionViewDataSource {
     func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
+        1 // viewModel.newSet[section]
+    }
+
+    func numberOfSections(in _: UICollectionView) -> Int {
         viewModel.newSet.count
     }
 
@@ -45,12 +49,26 @@ extension BooksScreen: UICollectionViewDataSource {
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
         let result = collectionView.dequeueReusableCell(for: indexPath, cellType: BookCell.self)
-        let data = viewModel.newSet.lazy.compactMap {
-            $0.volumeInfo.imageLinks?.thumbnail
-        }[safe: indexPath.item]
-        result.bookPhotoView.kf.setImage(with: URL(string: data ?? ""))
+        /* let data = viewModel.newSet.lazy.compactMap {
+             $0.volumeInfo.imageLinks?.thumbnail
+         }[safe: indexPath.item]
+         result.bookPhotoView.kf.setImage(with: URL(string: data ?? "")) */
         result.backgroundColor = .yellow
         return result
+    }
+
+    func collectionView(
+        _ collectionView: UICollectionView,
+        viewForSupplementaryElementOfKind kind: String,
+        at indexPath: IndexPath
+    ) -> UICollectionReusableView {
+        let header = collectionView.dequeueReusableSupplementaryView(
+            ofKind: kind,
+            for: indexPath,
+            viewType: BookSectionHeader.self
+        )
+        header.label.text = viewModel.newSet[indexPath.section].model
+        return header
     }
 }
 
@@ -60,28 +78,41 @@ extension BooksScreen: UICollectionViewDelegate {
             let data = viewModel.newSet.lazy.compactMap {
                 $0
             }[safe: indexPath.item]
-            await dependenciesContainer.resolve(AnyCoordinator.self)?.openDetailScreen(book: data!)
+            // await dependenciesContainer.resolve(AnyCoordinator.self)?.openDetailScreen(book: data!)
         }
-    }
-}
-
-extension BooksScreen: UICollectionViewDelegateFlowLayout {
-    func collectionView(
-        _: UICollectionView,
-        layout _: UICollectionViewLayout,
-        sizeForItemAt _: IndexPath
-    ) -> CGSize {
-        .init(width: 200, height: 100)
     }
 }
 
 extension BooksScreen: AnyBooksScreen {
-    func onNewDataReceived(oldSet: [Book], newSet: [Book]) async {
-        await MainActor.run {
-            rootView.reload(using: StagedChangeset(source: oldSet, target: newSet)) { [weak viewModel] collection in
-                viewModel?.newSet = collection
+    func onNewDataReceived(oldSet _: DataSetType, newSet: DataSetType) async {
+        await MainActor.run { [weak viewModel] in
+            /* rootView.reload(using: StagedChangeset(source: oldSet, target: newSet)) { [weak viewModel] collection in
+                 viewModel?.newSet = collection
+             } */
+            viewModel?.newSet = newSet
+            rootView.reloadData()
+        }
+    }
+}
+
+class BookSectionHeader: UICollectionReusableView, Reusable {
+    unowned var label: UILabel!
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+
+        label = .init().then {
+            addSubview($0)
+            $0.textColor = .black
+            $0.snp.makeConstraints { make in
+                make.edges.equalToSuperview()
             }
         }
+    }
+
+    @available(*, unavailable)
+    @MainActor required init?(coder _: NSCoder) {
+        nil
     }
 }
 
@@ -105,6 +136,9 @@ final class BooksScreen: UIViewController {
         rootView = .init(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout()).then {
             $0.dataSource = self
             $0.delegate = self
+            ($0.collectionViewLayout as? UICollectionViewFlowLayout)?.itemSize = .init(width: 200, height: 100)
+            ($0.collectionViewLayout as? UICollectionViewFlowLayout)?.headerReferenceSize = .init(width: 300, height: 200)
+            $0.register(supplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withClass: BookSectionHeader.self)
             $0.register(cellType: BookCell.self)
             view.addSubview($0)
             $0.snp.makeConstraints { make in
