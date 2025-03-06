@@ -17,9 +17,9 @@ final class BookScreen: UIViewController {
 
     private var viewModel: BookViewModel!
 
-    init(_: VolumeInfo) {
+    init(_ volumeInfo: VolumeInfo) {
         super.init(nibName: nil, bundle: nil)
-        // viewModel = BookViewModel(screen: self, data: book)
+        viewModel = BookViewModel(screen: self, data: volumeInfo)
     }
 
     required init?(coder _: NSCoder) {
@@ -35,13 +35,13 @@ final class BookScreen: UIViewController {
                 make.leading.top.trailing.bottom.equalToSuperview()
             }
         }
-        /* bookImage.kf.setImage(
-             with: .network(
-                 URL(
-                     string: viewModel.data?.volumeInfo.imageLinks?.thumbnail ?? viewModel.data?.volumeInfo.imageLinks?.smallThumbnail
-                 ) ?? .init(unsafeString: "")
-             )
-         ) */
+        bookImage.kf.setImage(
+            with: .network(
+                URL(
+                    string: viewModel.data?.imageLinks?.homeScreenImage
+                ) ?? .init(unsafeString: "")
+            )
+        )
 
         backButton = .init().then {
             $0.setTitleForAllStates("Back")

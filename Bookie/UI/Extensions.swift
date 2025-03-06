@@ -38,3 +38,17 @@ extension UIView {
         }
     }
 }
+
+extension ImageLinks {
+    var homeScreenImage: String? {
+        let paths: Set<KeyPath<ImageLinks, String?>> = [
+            \.smallThumbnail,
+            \.thumbnail,
+            \.small,
+            \.medium,
+            \.large,
+            \.extraLarge,
+        ]
+        return paths.lazy.compactMap { self[keyPath: $0] }.first
+    }
+}

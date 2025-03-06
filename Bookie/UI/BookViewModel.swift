@@ -11,9 +11,9 @@ protocol AnyBookScreen: AnyObject {}
 class BookViewModel {
     unowned var screen: AnyBookScreen!
 
-    var data: Book?
+    var data: VolumeInfo?
 
-    init(screen: AnyBookScreen!, data: Book? = nil) {
+    init(screen: AnyBookScreen!, data: VolumeInfo? = nil) {
         self.screen = screen
         self.data = data
     }
