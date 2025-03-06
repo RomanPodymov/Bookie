@@ -17,19 +17,42 @@ import Then
 import UIKit
 
 class BookCell: UICollectionViewCell, Reusable {
-    unowned var booksView: UIStackView!
+    private unowned var thumbnailView: UIImageView!
+    private unowned var titleLabel: UILabel!
+    private unowned var authorLabel: UILabel!
 
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        booksView = .init().then {
-            $0.axis = .horizontal
-            $0.spacing = 10
+        thumbnailView = .init().then {
             contentView.addSubview($0)
             $0.snp.makeConstraints { make in
-                make.edges.equalToSuperview()
+                make.bottom.leading.top.equalToSuperview()
             }
         }
+
+        titleLabel = .init().then {
+            contentView.addSubview($0)
+            $0.snp.makeConstraints { make in
+                make.top.trailing.equalToSuperview()
+                make.leading.equalTo(thumbnailView.snp.trailing)
+            }
+        }
+
+        authorLabel = .init().then {
+            contentView.addSubview($0)
+            $0.snp.makeConstraints { make in
+                make.trailing.equalToSuperview()
+                make.top.equalTo(titleLabel.snp.bottom)
+                make.leading.equalTo(titleLabel)
+            }
+        }
+    }
+
+    func setup(with volumeInfo: VolumeInfo) {
+        thumbnailView.kf.setImage(with: URL(string: volumeInfo.imageLinks?.homeScreenImage ?? ""))
+        titleLabel.text = volumeInfo.title
+        authorLabel.text = volumeInfo.authors?.reduce("") { result, item in result + item }
     }
 
     required init?(coder _: NSCoder) {
@@ -51,17 +74,13 @@ extension BooksScreen: UICollectionViewDataSource {
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
         let result = collectionView.dequeueReusableCell(for: indexPath, cellType: BookCell.self)
-        let data = viewModel.newSet[indexPath.section].elements.lazy.compactMap {
-            $0.volumeInfo.imageLinks?.thumbnail
+        if let data = viewModel.newSet[
+            safe: indexPath.section
+        ]?.elements.lazy.compactMap(\.volumeInfo)[
+            safe: indexPath.item
+        ] {
+            result.setup(with: data)
         }
-        result.booksView.removeSubviews()
-        result.booksView.addArrangedSubviews(
-            data.map { image in
-                UIImageView().then {
-                    $0.kf.setImage(with: URL(string: image))
-                }
-            }
-        )
         result.backgroundColor = .yellow
         return result
     }
@@ -171,5 +190,19 @@ extension BooksScreen: @preconcurrency SHSearchBarDelegate {
         Task { [weak viewModel] in
             await viewModel?.reloadData()
         }
+    }
+}
+
+private extension ImageLinks {
+    var homeScreenImage: String? {
+        let paths: Set<KeyPath<ImageLinks, String?>> = [
+            \.smallThumbnail,
+            \.thumbnail,
+            \.small,
+            \.medium,
+            \.large,
+            \.extraLarge,
+        ]
+        return paths.lazy.compactMap { self[keyPath: $0] }.first
     }
 }
