@@ -18,20 +18,23 @@ class Coordinator: AnyCoordinator {
     func openHomeScren() async {
         await MainActor.run { [weak window] in
             window?.rootViewController = BooksScreen()
-
-            let options: UIView.AnimationOptions = .transitionCrossDissolve
-            let duration: TimeInterval = 0.3
-            UIView.transition(with: window!, duration: duration, options: options, animations: {}, completion: { _ in })
         }
+        await animateScrenChange()
     }
 
-    func openDetailScreen(book: Book) async {
+    func openDetailScreen(_ data: VolumeInfo) async {
         await MainActor.run { [weak window] in
-            window?.rootViewController = BookScreen(book: book)
-
-            let options: UIView.AnimationOptions = .transitionCrossDissolve
-            let duration: TimeInterval = 0.3
-            UIView.transition(with: window!, duration: duration, options: options, animations: {}, completion: { _ in })
+            window?.rootViewController = BookScreen(data)
         }
+        await animateScrenChange()
+    }
+
+    private func animateScrenChange() async {
+        guard let window else {
+            return
+        }
+        let options: UIView.AnimationOptions = .transitionCrossDissolve
+        let duration: TimeInterval = 0.3
+        await UIView.transition(with: window, duration: duration, options: options, animations: {})
     }
 }

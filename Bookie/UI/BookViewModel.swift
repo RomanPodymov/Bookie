@@ -6,12 +6,6 @@
 //  Copyright © 2025 Bookie. All rights reserved.
 //
 
-import Combine
-import CombineMoya
-import DifferenceKit
-import Foundation
-import Moya
-
 protocol AnyBookScreen: AnyObject {}
 
 class BookViewModel {

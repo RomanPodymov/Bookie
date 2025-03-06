@@ -5,9 +5,6 @@ options:
     iOS: 15.0
   xcodeVersion: "16.2"
 packages:
-  Fashion:
-    url: https://github.com/vadymmarkov/Fashion
-    version: 4.2.0
   Swinject:
     url: https://github.com/Swinject/Swinject.git
     version: 2.9.1
@@ -45,7 +42,6 @@ targets:
     platform: iOS
     sources: [Bookie]
     dependencies:
-      - package: Fashion
       - package: Swinject
       - package: CombineMoya
       - package: Then
@@ -72,5 +68,7 @@ targets:
     type: bundle.unit-test
     platform: iOS
     sources: [BookieTests]
+    dependencies:
+      - target: BookieApp
     info:
       path: BookieTests/Info.plist

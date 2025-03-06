@@ -6,10 +6,6 @@
 //  Copyright © 2025 Bookie. All rights reserved.
 //
 
-import Kingfisher
-import Reusable
-import SnapKit
-import SwifterSwift
 import SwiftUI
 
 struct BooksScreenRootView: View {
@@ -19,7 +15,7 @@ struct BooksScreenRootView: View {
 }
 
 final class BooksScreenSwiftUI: UIHostingController<BooksScreenRootView>, AnyBooksScreen {
-    func onNewDataReceived(oldSet _: [Book], newSet _: [Book]) async {}
+    func onNewDataReceived(oldSet _: DataSetType, newSet _: DataSetType) async {}
 
     init() {
         super.init(rootView: BooksScreenRootView())

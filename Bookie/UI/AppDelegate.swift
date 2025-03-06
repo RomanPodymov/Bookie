@@ -6,7 +6,6 @@
 //  Copyright © 2025 Bookie. All rights reserved.
 //
 
-import Fashion
 @preconcurrency import Swinject
 import Then
 import UIKit
@@ -14,7 +13,7 @@ import UIKit
 protocol AnyCoordinator {
     func set(window: UIWindow)
     func openHomeScren() async
-    func openDetailScreen(book: Book) async
+    func openDetailScreen(_ data: VolumeInfo) async
 }
 
 let dependenciesContainer = {

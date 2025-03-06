@@ -6,14 +6,9 @@
 //  Copyright © 2025 Bookie. All rights reserved.
 //
 
-import DifferenceKit
 import Kingfisher
-import Reusable
-import SHSearchBar
 import SnapKit
 import SwifterSwift
-import SwiftUI
-import Then
 import UIKit
 
 final class BookScreen: UIViewController {
@@ -22,9 +17,9 @@ final class BookScreen: UIViewController {
 
     private var viewModel: BookViewModel!
 
-    init(book: Book) {
+    init(_: VolumeInfo) {
         super.init(nibName: nil, bundle: nil)
-        viewModel = BookViewModel(screen: self, data: book)
+        // viewModel = BookViewModel(screen: self, data: book)
     }
 
     required init?(coder _: NSCoder) {
@@ -40,13 +35,13 @@ final class BookScreen: UIViewController {
                 make.leading.top.trailing.bottom.equalToSuperview()
             }
         }
-        bookImage.kf.setImage(
-            with: .network(
-                URL(
-                    string: viewModel.data?.volumeInfo.imageLinks?.thumbnail ?? viewModel.data?.volumeInfo.imageLinks?.smallThumbnail
-                ) ?? .init(unsafeString: "")
-            )
-        )
+        /* bookImage.kf.setImage(
+             with: .network(
+                 URL(
+                     string: viewModel.data?.volumeInfo.imageLinks?.thumbnail ?? viewModel.data?.volumeInfo.imageLinks?.smallThumbnail
+                 ) ?? .init(unsafeString: "")
+             )
+         ) */
 
         backButton = .init().then {
             $0.setTitleForAllStates("Back")

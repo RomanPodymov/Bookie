@@ -6,29 +6,35 @@
 //  Copyright © 2025 Bookie. All rights reserved.
 //
 
-import Combine
 import CombineMoya
 import DifferenceKit
 import Foundation
 import Moya
 
 protocol AnyBooksScreen: AnyObject {
-    func onNewDataReceived(oldSet: [Book], newSet: [Book]) async
+    func onNewDataReceived(oldSet: DataSetType, newSet: DataSetType) async
 }
 
 enum BookLanguage: String {
+    // swiftlint:disable identifier_name
     case en
     case cs
+
+    static let `default` = Self.cs
+    // swiftlint:enable identifier_name
 }
+
+typealias DataSetItemType = ArraySection<String, Book>
+typealias DataSetType = [ArraySection<String, Book>]
 
 class BooksViewModel {
     unowned var screen: AnyBooksScreen!
 
-    var searchText: String? = "peter"
-    var allowedLanguages: [BookLanguage] = [.cs]
+    var searchText: String? = "King"
+    var allowedLanguages: Set<BookLanguage> = [.cs, .en]
     private var data: BookResponse?
-    var oldSet: [Book] = []
-    var newSet: [Book] = []
+    private var oldSet: DataSetType = .init()
+    private var newSet: DataSetType = .init()
 
     init(screen: AnyBooksScreen!, data: BookResponse? = nil) {
         self.screen = screen
@@ -38,23 +44,57 @@ class BooksViewModel {
     func reloadData() async {
         let provider = MoyaProvider<BooksService>()
         do {
-            guard let response = try await provider.requestPublisher(.volumes(query: searchText)).values.first(where: { _ in true }) else {
+            guard let response = try await provider.requestPublisher(.volumes(query: searchText)).values.first(
+                where: { _ in true }
+            ) else {
                 return
             }
             let books = try JSONDecoder().decode(BookResponse.self, from: response.data)
+
             data = books
             oldSet = newSet
-            let newSet = books.items.filter { book in
+
+            let newSetFiltered = books.items.filter { book in
                 allowedLanguages.contains(
-                    book.volumeInfo.language.flatMap { BookLanguage(rawValue: $0) } ?? .en
+                    book.volumeInfo.language.flatMap { BookLanguage(rawValue: $0) } ?? .default
                 )
             }
+            let newSet = [String: [Book]](grouping: newSetFiltered, by: {
+                $0.volumeInfo.categories?.first ?? ""
+            }).map {
+                DataSetItemType(model: $0.key, elements: $0.value)
+            }
+
             await screen?.onNewDataReceived(oldSet: oldSet, newSet: newSet)
         } catch {}
     }
+
+    func numberOfItemsInSection(_ section: Int) -> Int {
+        newSet[section].elements.count
+    }
+
+    var numberOfSections: Int {
+        newSet.count
+    }
+
+    func data(for indexPath: IndexPath) -> DataSetItemType? {
+        newSet[
+            safe: indexPath.section
+        ]
+    }
+
+    func data(for indexPath: IndexPath) -> VolumeInfo? {
+        data(for: indexPath)?.elements.lazy.compactMap(\.volumeInfo)[
+            safe: indexPath.item
+        ]
+    }
+
+    func on(newSet: DataSetType) {
+        self.newSet = newSet
+    }
 }
 
-extension Book: Differentiable {
+extension Book: ContentIdentifiable, ContentEquatable {
     var differenceIdentifier: String {
         id
     }
@@ -63,3 +103,7 @@ extension Book: Differentiable {
         source.id == id
     }
 }
+
+extension String: @retroactive ContentIdentifiable, @retroactive ContentEquatable {}
+
+extension ArraySection: @unchecked @retroactive Sendable {}
