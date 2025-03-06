@@ -24,11 +24,6 @@ enum BookLanguage: String {
     // swiftlint:enable identifier_name
 }
 
-struct BooksForCategory {
-    let category: String
-    let books: [Book]
-}
-
 typealias DataSetItemType = ArraySection<String, Book>
 typealias DataSetType = [ArraySection<String, Book>]
 
@@ -82,10 +77,14 @@ class BooksViewModel {
         newSet.count
     }
 
-    func data(for indexPath: IndexPath) -> VolumeInfo? {
+    func data(for indexPath: IndexPath) -> DataSetItemType? {
         newSet[
             safe: indexPath.section
-        ]?.elements.lazy.compactMap(\.volumeInfo)[
+        ]
+    }
+
+    func data(for indexPath: IndexPath) -> VolumeInfo? {
+        data(for: indexPath)?.elements.lazy.compactMap(\.volumeInfo)[
             safe: indexPath.item
         ]
     }

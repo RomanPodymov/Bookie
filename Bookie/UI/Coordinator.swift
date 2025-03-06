@@ -38,24 +38,3 @@ class Coordinator: AnyCoordinator {
         await UIView.transition(with: window, duration: duration, options: options, animations: {})
     }
 }
-
-private extension UIView {
-    @discardableResult
-    class func transition(
-        with view: UIView,
-        duration: TimeInterval,
-        options: UIView.AnimationOptions = [],
-        animations: (() -> Void)?
-    ) async -> Bool {
-        await withCheckedContinuation { continuation in
-            Self.transition(
-                with: view,
-                duration: duration,
-                options: options,
-                animations: animations
-            ) {
-                continuation.resume(returning: $0)
-            }
-        }
-    }
-}

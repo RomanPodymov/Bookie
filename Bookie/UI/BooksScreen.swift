@@ -11,86 +11,6 @@ import Reusable
 import SHSearchBar
 import UIKit
 
-extension BooksScreen: UICollectionViewDataSource {
-    func collectionView(_: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        viewModel.numberOfItemsInSection(section)
-    }
-
-    func numberOfSections(in _: UICollectionView) -> Int {
-        viewModel.numberOfSections
-    }
-
-    func collectionView(
-        _ collectionView: UICollectionView,
-        cellForItemAt indexPath: IndexPath
-    ) -> UICollectionViewCell {
-        let result = collectionView.dequeueReusableCell(for: indexPath, cellType: BookCell.self)
-        if let data = viewModel.data(for: indexPath) {
-            result.setup(with: data)
-        }
-        return result
-    }
-
-    func collectionView(
-        _ collectionView: UICollectionView,
-        viewForSupplementaryElementOfKind kind: String,
-        at indexPath: IndexPath
-    ) -> UICollectionReusableView {
-        let header = collectionView.dequeueReusableSupplementaryView(
-            ofKind: kind,
-            for: indexPath,
-            viewType: BookSectionHeader.self
-        )
-        return header
-    }
-}
-
-extension BooksScreen: UICollectionViewDelegate {
-    func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        Task {
-            if let data = viewModel.data(for: indexPath) {
-                await dependenciesContainer.resolve(AnyCoordinator.self)?.openDetailScreen(data)
-            }
-        }
-    }
-}
-
-extension BooksScreen: AnyBooksScreen {
-    func onNewDataReceived(oldSet: DataSetType, newSet: DataSetType) async {
-        await MainActor.run { [weak viewModel] in
-            rootView.reload(using: StagedChangeset(source: oldSet, target: newSet)) { [weak viewModel] collection in
-                viewModel?.on(newSet: collection)
-            }
-        }
-    }
-}
-
-class BookSectionHeader: UICollectionReusableView, Reusable {
-    private unowned var label: UILabel!
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-
-        backgroundColor = .green
-        label = .init().then {
-            addSubview($0)
-            $0.textColor = .black
-            $0.snp.makeConstraints { make in
-                make.edges.equalToSuperview()
-            }
-        }
-    }
-
-    @available(*, unavailable)
-    @MainActor required init?(coder _: NSCoder) {
-        nil
-    }
-
-    func setup(with _: VolumeInfo) {
-        // label.text = volumeInfo.
-    }
-}
-
 final class BooksScreen: UIViewController {
     private unowned var searchBar: SHSearchBar!
     private unowned var rootView: UICollectionView!
@@ -129,6 +49,67 @@ final class BooksScreen: UIViewController {
 
         Task { [weak viewModel] in
             await viewModel?.reloadData()
+        }
+    }
+}
+
+extension BooksScreen: UICollectionViewDataSource {
+    func collectionView(_: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        viewModel.numberOfItemsInSection(section)
+    }
+
+    func numberOfSections(in _: UICollectionView) -> Int {
+        viewModel.numberOfSections
+    }
+
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(for: indexPath, cellType: BookCell.self)
+
+        viewModel.data(for: indexPath).map {
+            cell.setup(with: $0)
+        }
+
+        return cell
+    }
+
+    func collectionView(
+        _ collectionView: UICollectionView,
+        viewForSupplementaryElementOfKind kind: String,
+        at indexPath: IndexPath
+    ) -> UICollectionReusableView {
+        let header = collectionView.dequeueReusableSupplementaryView(
+            ofKind: kind,
+            for: indexPath,
+            viewType: BookSectionHeader.self
+        )
+
+        viewModel.data(for: indexPath).map {
+            header.setup(with: $0)
+        }
+
+        return header
+    }
+}
+
+extension BooksScreen: UICollectionViewDelegate {
+    func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        Task {
+            await viewModel.data(for: indexPath).mapAsync {
+                await dependenciesContainer.resolve(AnyCoordinator.self)?.openDetailScreen($0)
+            }
+        }
+    }
+}
+
+extension BooksScreen: AnyBooksScreen {
+    func onNewDataReceived(oldSet: DataSetType, newSet: DataSetType) async {
+        await MainActor.run { [weak viewModel] in
+            rootView.reload(using: StagedChangeset(source: oldSet, target: newSet)) { [weak viewModel] collection in
+                viewModel?.on(newSet: collection)
+            }
         }
     }
 }

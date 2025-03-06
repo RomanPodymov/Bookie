@@ -35,13 +35,13 @@ final class BookScreen: UIViewController {
                 make.leading.top.trailing.bottom.equalToSuperview()
             }
         }
-        bookImage.kf.setImage(
-            with: .network(
-                URL(
-                    string: viewModel.data?.volumeInfo.imageLinks?.thumbnail ?? viewModel.data?.volumeInfo.imageLinks?.smallThumbnail
-                ) ?? .init(unsafeString: "")
-            )
-        )
+        /* bookImage.kf.setImage(
+             with: .network(
+                 URL(
+                     string: viewModel.data?.volumeInfo.imageLinks?.thumbnail ?? viewModel.data?.volumeInfo.imageLinks?.smallThumbnail
+                 ) ?? .init(unsafeString: "")
+             )
+         ) */
 
         backButton = .init().then {
             $0.setTitleForAllStates("Back")
