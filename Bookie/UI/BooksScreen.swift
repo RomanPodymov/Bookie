@@ -17,12 +17,14 @@ import Then
 import UIKit
 
 class BookCell: UICollectionViewCell, Reusable {
-    unowned var bookPhotoView: UIImageView!
+    unowned var booksView: UIStackView!
 
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        bookPhotoView = UIImageView().then {
+        booksView = .init().then {
+            $0.axis = .horizontal
+            $0.spacing = 10
             contentView.addSubview($0)
             $0.snp.makeConstraints { make in
                 make.edges.equalToSuperview()
@@ -49,10 +51,17 @@ extension BooksScreen: UICollectionViewDataSource {
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
         let result = collectionView.dequeueReusableCell(for: indexPath, cellType: BookCell.self)
-        /* let data = viewModel.newSet.lazy.compactMap {
-             $0.volumeInfo.imageLinks?.thumbnail
-         }[safe: indexPath.item]
-         result.bookPhotoView.kf.setImage(with: URL(string: data ?? "")) */
+        let data = viewModel.newSet[indexPath.section].elements.lazy.compactMap {
+            $0.volumeInfo.imageLinks?.thumbnail
+        }
+        result.booksView.removeSubviews()
+        result.booksView.addArrangedSubviews(
+            data.map { image in
+                UIImageView().then {
+                    $0.kf.setImage(with: URL(string: image))
+                }
+            }
+        )
         result.backgroundColor = .yellow
         return result
     }
@@ -136,7 +145,10 @@ final class BooksScreen: UIViewController {
             $0.delegate = self
             ($0.collectionViewLayout as? UICollectionViewFlowLayout)?.itemSize = .init(width: 200, height: 100)
             ($0.collectionViewLayout as? UICollectionViewFlowLayout)?.headerReferenceSize = .init(width: 300, height: 200)
-            $0.register(supplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withClass: BookSectionHeader.self)
+            $0.register(
+                supplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+                withClass: BookSectionHeader.self
+            )
             $0.register(cellType: BookCell.self)
             view.addSubview($0)
             $0.snp.makeConstraints { make in
