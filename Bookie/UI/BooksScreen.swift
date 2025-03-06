@@ -7,6 +7,8 @@
 //
 
 import DifferenceKit
+import NVActivityIndicatorView
+import NVActivityIndicatorViewExtended
 import Reusable
 import SHSearchBar
 import UIKit
@@ -48,6 +50,8 @@ final class BooksScreen: UIViewController {
         view.backgroundColor = .green
 
         Task { [weak viewModel] in
+            NVActivityIndicatorPresenter.sharedInstance.startAnimating(.init(message: "Loading"))
+
             await viewModel?.reloadData()
         }
     }
@@ -111,6 +115,7 @@ extension BooksScreen: AnyBooksScreen {
                 viewModel?.on(newSet: collection)
             }
         }
+        NVActivityIndicatorPresenter.sharedInstance.stopAnimating()
     }
 }
 

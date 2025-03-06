@@ -32,6 +32,9 @@ packages:
   DifferenceKit:
     url: https://github.com/ra1028/DifferenceKit
     version: 1.3.0
+  NVActivityIndicatorViewExtended:
+    url: https://github.com/ninjaprox/NVActivityIndicatorView
+    version: 5.2.0
 targets:
   BookieApp:
     settings:
@@ -51,6 +54,7 @@ targets:
       - package: Reusable
       - package: SHSearchBar
       - package: DifferenceKit
+      - package: NVActivityIndicatorViewExtended
     info:
       path: Bookie/Info.plist
       properties:
