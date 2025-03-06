@@ -6,10 +6,6 @@
 //  Copyright © 2025 Bookie. All rights reserved.
 //
 
-import Kingfisher
-import Reusable
-import SnapKit
-import SwifterSwift
 import SwiftUI
 
 struct BooksScreenRootView: View {

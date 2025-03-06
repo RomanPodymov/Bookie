@@ -6,14 +6,9 @@
 //  Copyright © 2025 Bookie. All rights reserved.
 //
 
-import DifferenceKit
 import Kingfisher
-import Reusable
-import SHSearchBar
 import SnapKit
 import SwifterSwift
-import SwiftUI
-import Then
 import UIKit
 
 final class BookScreen: UIViewController {
