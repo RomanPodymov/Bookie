@@ -36,8 +36,8 @@ class BookCell: UICollectionViewCell, Reusable {
 }
 
 extension BooksScreen: UICollectionViewDataSource {
-    func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
-        1 // viewModel.newSet[section]
+    func collectionView(_: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        viewModel.newSet[section].elements.count
     }
 
     func numberOfSections(in _: UICollectionView) -> Int {
@@ -84,13 +84,11 @@ extension BooksScreen: UICollectionViewDelegate {
 }
 
 extension BooksScreen: AnyBooksScreen {
-    func onNewDataReceived(oldSet _: DataSetType, newSet: DataSetType) async {
+    func onNewDataReceived(oldSet: DataSetType, newSet: DataSetType) async {
         await MainActor.run { [weak viewModel] in
-            /* rootView.reload(using: StagedChangeset(source: oldSet, target: newSet)) { [weak viewModel] collection in
-                 viewModel?.newSet = collection
-             } */
-            viewModel?.newSet = newSet
-            rootView.reloadData()
+            rootView.reload(using: StagedChangeset(source: oldSet, target: newSet)) { [weak viewModel] collection in
+                viewModel?.newSet = collection
+            }
         }
     }
 }
