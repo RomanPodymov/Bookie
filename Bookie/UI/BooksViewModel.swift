@@ -38,8 +38,8 @@ class BooksViewModel {
     var searchText: String? = "King"
     var allowedLanguages: Set<BookLanguage> = [.cs, .en]
     private var data: BookResponse?
-    var oldSet: DataSetType = .init()
-    var newSet: DataSetType = .init()
+    private var oldSet: DataSetType = .init()
+    private var newSet: DataSetType = .init()
 
     init(screen: AnyBooksScreen!, data: BookResponse? = nil) {
         self.screen = screen
@@ -72,6 +72,26 @@ class BooksViewModel {
 
             await screen?.onNewDataReceived(oldSet: oldSet, newSet: newSet)
         } catch {}
+    }
+
+    func numberOfItemsInSection(_ section: Int) -> Int {
+        newSet[section].elements.count
+    }
+
+    var numberOfSections: Int {
+        newSet.count
+    }
+
+    func data(for indexPath: IndexPath) -> VolumeInfo? {
+        newSet[
+            safe: indexPath.section
+        ]?.elements.lazy.compactMap(\.volumeInfo)[
+            safe: indexPath.item
+        ]
+    }
+
+    func on(newSet: DataSetType) {
+        self.newSet = newSet
     }
 }
 

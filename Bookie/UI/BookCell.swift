@@ -43,6 +43,7 @@ class BookCell: UICollectionViewCell, Reusable {
     }
 
     func setup(with volumeInfo: VolumeInfo) {
+        backgroundColor = .yellow
         thumbnailView.kf.setImage(with: URL(string: volumeInfo.imageLinks?.homeScreenImage ?? ""))
         titleLabel.text = volumeInfo.title
         authorLabel.text = volumeInfo.authors?.reduce("") { result, item in result + item }

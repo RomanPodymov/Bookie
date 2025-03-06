@@ -17,9 +17,9 @@ final class BookScreen: UIViewController {
 
     private var viewModel: BookViewModel!
 
-    init(book: Book) {
+    init(_: VolumeInfo) {
         super.init(nibName: nil, bundle: nil)
-        viewModel = BookViewModel(screen: self, data: book)
+        // viewModel = BookViewModel(screen: self, data: book)
     }
 
     required init?(coder _: NSCoder) {

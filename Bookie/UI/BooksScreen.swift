@@ -13,11 +13,11 @@ import UIKit
 
 extension BooksScreen: UICollectionViewDataSource {
     func collectionView(_: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        viewModel.newSet[section].elements.count
+        viewModel.numberOfItemsInSection(section)
     }
 
     func numberOfSections(in _: UICollectionView) -> Int {
-        viewModel.newSet.count
+        viewModel.numberOfSections
     }
 
     func collectionView(
@@ -25,14 +25,9 @@ extension BooksScreen: UICollectionViewDataSource {
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
         let result = collectionView.dequeueReusableCell(for: indexPath, cellType: BookCell.self)
-        if let data = viewModel.newSet[
-            safe: indexPath.section
-        ]?.elements.lazy.compactMap(\.volumeInfo)[
-            safe: indexPath.item
-        ] {
+        if let data = viewModel.data(for: indexPath) {
             result.setup(with: data)
         }
-        result.backgroundColor = .yellow
         return result
     }
 
@@ -46,7 +41,6 @@ extension BooksScreen: UICollectionViewDataSource {
             for: indexPath,
             viewType: BookSectionHeader.self
         )
-        header.label.text = viewModel.newSet[indexPath.section].model
         return header
     }
 }
@@ -54,10 +48,9 @@ extension BooksScreen: UICollectionViewDataSource {
 extension BooksScreen: UICollectionViewDelegate {
     func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         Task {
-            let data = viewModel.newSet.lazy.compactMap {
-                $0
-            }[safe: indexPath.item]
-            // await dependenciesContainer.resolve(AnyCoordinator.self)?.openDetailScreen(book: data!)
+            if let data = viewModel.data(for: indexPath) {
+                await dependenciesContainer.resolve(AnyCoordinator.self)?.openDetailScreen(data)
+            }
         }
     }
 }
@@ -66,14 +59,14 @@ extension BooksScreen: AnyBooksScreen {
     func onNewDataReceived(oldSet: DataSetType, newSet: DataSetType) async {
         await MainActor.run { [weak viewModel] in
             rootView.reload(using: StagedChangeset(source: oldSet, target: newSet)) { [weak viewModel] collection in
-                viewModel?.newSet = collection
+                viewModel?.on(newSet: collection)
             }
         }
     }
 }
 
 class BookSectionHeader: UICollectionReusableView, Reusable {
-    unowned var label: UILabel!
+    private unowned var label: UILabel!
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -91,6 +84,10 @@ class BookSectionHeader: UICollectionReusableView, Reusable {
     @available(*, unavailable)
     @MainActor required init?(coder _: NSCoder) {
         nil
+    }
+
+    func setup(with _: VolumeInfo) {
+        // label.text = volumeInfo.
     }
 }
 

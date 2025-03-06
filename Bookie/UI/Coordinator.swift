@@ -22,9 +22,9 @@ class Coordinator: AnyCoordinator {
         await animateScrenChange()
     }
 
-    func openDetailScreen(book: Book) async {
+    func openDetailScreen(_ data: VolumeInfo) async {
         await MainActor.run { [weak window] in
-            window?.rootViewController = BookScreen(book: book)
+            window?.rootViewController = BookScreen(data)
         }
         await animateScrenChange()
     }
