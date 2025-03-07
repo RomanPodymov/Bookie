@@ -14,6 +14,8 @@ import SHSearchBar
 import UICollectionViewLeftAlignedLayout
 import UIKit
 
+class BooksScreenView: UIView {}
+
 final class BooksScreen: UIViewController {
     private unowned var searchBar: SHSearchBar!
     private unowned var rootView: UICollectionView!
@@ -30,6 +32,10 @@ final class BooksScreen: UIViewController {
         nil
     }
 
+    override func loadView() {
+        view = BooksScreenView(styles: [Style.booksScreenView])
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -43,10 +49,11 @@ final class BooksScreen: UIViewController {
         }
 
         rootView = .init(frame: .zero, collectionViewLayout: UICollectionViewLeftAlignedLayout()).then {
+            $0.apply(styles: Style.booksScreenRootView)
             $0.dataSource = self
             $0.delegate = self
-            //($0.collectionViewLayout as? UICollectionViewLeftAlignedLayout)?.minimumLineSpacing = 30
-            //($0.collectionViewLayout as? UICollectionViewLeftAlignedLayout)?.minimumInteritemSpacing = 50
+            // ($0.collectionViewLayout as? UICollectionViewLeftAlignedLayout)?.minimumLineSpacing = 30
+            // ($0.collectionViewLayout as? UICollectionViewLeftAlignedLayout)?.minimumInteritemSpacing = 50
             ($0.collectionViewLayout as? UICollectionViewFlowLayout)?.itemSize = .init(
                 width: 200,
                 height: 100

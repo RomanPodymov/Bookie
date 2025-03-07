@@ -15,10 +15,9 @@ class BookSectionHeader: UICollectionReusableView, Reusable {
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        backgroundColor = .green
-        label = .init().then {
+        apply(styles: Style.bookSectionHeader)
+        label = .init(styles: [Style.titleLabel]).then {
             addSubview($0)
-            $0.textColor = .black
             $0.snp.makeConstraints { make in
                 make.edges.equalToSuperview()
             }

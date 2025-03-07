@@ -13,6 +13,10 @@ enum Style: String, StringConvertible {
     case titleLabel
     case subtitleLabel
     case loadingView
+    case booksScreenView
+    case booksScreenRootView
+    case bookSectionHeader
+    case bookCell
 
     var string: String {
         rawValue
@@ -36,6 +40,32 @@ final class MainStylesheet: Stylesheet {
         register(Style.loadingView) { (loadingView: UIView) in
             Task { @MainActor in
                 loadingView.backgroundColor = .init(red: 0.5, green: 0.5, blue: 0.5, alpha: 0.5)
+            }
+        }
+
+        let backgroundColor = UIColor.yellow
+
+        register(Style.booksScreenView) { (booksScreenView: UIView) in
+            Task { @MainActor in
+                booksScreenView.backgroundColor = backgroundColor
+            }
+        }
+
+        register(Style.booksScreenRootView) { (view: UICollectionView) in
+            Task { @MainActor in
+                view.backgroundColor = backgroundColor
+            }
+        }
+
+        register(Style.bookSectionHeader) { (header: BookSectionHeader) in
+            Task { @MainActor in
+                header.backgroundColor = backgroundColor
+            }
+        }
+
+        register(Style.bookCell) { (cell: BookCell) in
+            Task { @MainActor in
+                cell.backgroundColor = backgroundColor
             }
         }
     }
