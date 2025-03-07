@@ -10,14 +10,13 @@ import DifferenceKit
 import NVActivityIndicatorView
 import NVActivityIndicatorViewExtended
 import Reusable
-import SHSearchBar
 import UICollectionViewLeftAlignedLayout
 import UIKit
 
 class BooksScreenView: UIView {}
 
 final class BooksScreen: UIViewController {
-    private unowned var searchBar: SHSearchBar!
+    private unowned var searchBar: UISearchBar!
     private unowned var rootView: UICollectionView!
     private unowned var loadingView: LoadingView!
 
@@ -39,7 +38,7 @@ final class BooksScreen: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        searchBar = .init(config: .init()).then {
+        searchBar = .init().then {
             $0.text = viewModel.searchText
             $0.delegate = self
             view.addSubview($0)
@@ -164,8 +163,8 @@ extension BooksScreen: AnyBooksScreen {
     }
 }
 
-extension BooksScreen: @preconcurrency SHSearchBarDelegate {
-    func searchBar(_ searchBar: SHSearchBar, textDidChange _: String) {
+extension BooksScreen: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, textDidChange _: String) {
         viewModel.searchText = searchBar.text
         Task { [weak viewModel] in
             await viewModel?.reloadData()

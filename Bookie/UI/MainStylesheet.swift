@@ -25,15 +25,19 @@ enum Style: String, StringConvertible {
 
 final class MainStylesheet: Stylesheet {
     func define() {
+        let textColor = UIColor.black
+
         register(Style.titleLabel) { (label: UILabel) in
             Task { @MainActor in
-                label.textColor = .red
+                label.font = UIFont.boldSystemFont(ofSize: 20)
+                label.textColor = textColor
             }
         }
 
         register(Style.subtitleLabel) { (label: UILabel) in
             Task { @MainActor in
-                label.textColor = .white
+                label.font = UIFont.systemFont(ofSize: 18)
+                label.textColor = textColor
             }
         }
 

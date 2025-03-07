@@ -29,9 +29,6 @@ packages:
   Reusable:
     url: https://github.com/AliSoftware/Reusable
     version: 4.1.2
-  SHSearchBar:
-    url: https://github.com/Blackjacx/SHSearchBar
-    version: 2.1.0
   DifferenceKit:
     url: https://github.com/ra1028/DifferenceKit
     version: 1.3.0
@@ -59,7 +56,6 @@ targets:
       - package: Kingfisher
       - package: SwifterSwift
       - package: Reusable
-      - package: SHSearchBar
       - package: DifferenceKit
       - package: NVActivityIndicatorViewExtended
       - package: UICollectionViewLeftAlignedLayout

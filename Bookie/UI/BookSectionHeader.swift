@@ -31,6 +31,6 @@ class BookSectionHeader: UICollectionReusableView, Reusable {
 
     func setup(with data: DataSetItemType) {
         let category = data.model.joined(separator: ",")
-        label.text = category.isEmpty ? "Unknwon" : category
+        label.text = category.isEmpty ? L10n.BooksScreen.categoryUnknown : category
     }
 }
