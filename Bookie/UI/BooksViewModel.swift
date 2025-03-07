@@ -96,6 +96,12 @@ final class BooksViewModel {
         ]
     }
 
+    func data(for indexPath: IndexPath) -> Book? {
+        data(for: indexPath)?.elements.lazy[
+            safe: indexPath.item
+        ]
+    }
+
     func data(for indexPath: IndexPath) -> VolumeInfo? {
         data(for: indexPath)?.elements.lazy.compactMap(\.volumeInfo)[
             safe: indexPath.item

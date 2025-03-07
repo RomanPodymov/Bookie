@@ -18,9 +18,9 @@ final class BookScreen: UIViewController {
 
     private var viewModel: BookViewModel!
 
-    init(_ volumeInfo: VolumeInfo) {
+    init(_ data: Book?) {
         super.init(nibName: nil, bundle: nil)
-        viewModel = BookViewModel(screen: self, data: volumeInfo)
+        viewModel = BookViewModel(screen: self, data: data)
     }
 
     required init?(coder _: NSCoder) {
@@ -39,7 +39,7 @@ final class BookScreen: UIViewController {
         bookImage.kf.setImage(
             with: .network(
                 URL(
-                    string: viewModel.data?.imageLinks?.homeScreenImage
+                    string: viewModel.data?.volumeInfo.imageLinks?.homeScreenImage
                 ) ?? .init(unsafeString: "")
             )
         )
@@ -66,11 +66,9 @@ final class BookScreen: UIViewController {
             } else {
                 $0.setTitleForAllStates(L10n.BookScreen.buttonBack)
             }
-            $0.addAction(.init(handler: { _ in
-                Task {
-                    let stringURL = "ibooks://assetid/2SYhAQAAIAAJ"
-                    let url = URL(string: stringURL)
-                    await UIApplication.shared.open(url!)
+            $0.addAction(.init(handler: { [weak viewModel] _ in
+                Task { [weak viewModel] in
+                    await viewModel?.openBook()
                 }
             }), for: .primaryActionTriggered)
             view.addSubview($0)
