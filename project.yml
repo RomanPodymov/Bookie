@@ -38,6 +38,9 @@ packages:
   NVActivityIndicatorViewExtended:
     url: https://github.com/ninjaprox/NVActivityIndicatorView
     version: 5.2.0
+  UICollectionViewLeftAlignedLayout:
+    url: https://github.com/mokagio/UICollectionViewLeftAlignedLayout
+    version: 1.1.0
 targets:
   BookieApp:
     settings:
@@ -59,6 +62,7 @@ targets:
       - package: SHSearchBar
       - package: DifferenceKit
       - package: NVActivityIndicatorViewExtended
+      - package: UICollectionViewLeftAlignedLayout
     info:
       path: Bookie/Info.plist
       properties:

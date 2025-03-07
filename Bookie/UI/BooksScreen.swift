@@ -11,6 +11,7 @@ import NVActivityIndicatorView
 import NVActivityIndicatorViewExtended
 import Reusable
 import SHSearchBar
+import UICollectionViewLeftAlignedLayout
 import UIKit
 
 final class BooksScreen: UIViewController {
@@ -41,11 +42,19 @@ final class BooksScreen: UIViewController {
             }
         }
 
-        rootView = .init(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout()).then {
+        rootView = .init(frame: .zero, collectionViewLayout: UICollectionViewLeftAlignedLayout()).then {
             $0.dataSource = self
             $0.delegate = self
-            ($0.collectionViewLayout as? UICollectionViewFlowLayout)?.itemSize = .init(width: 200, height: 100)
-            ($0.collectionViewLayout as? UICollectionViewFlowLayout)?.headerReferenceSize = .init(width: 300, height: 200)
+            //($0.collectionViewLayout as? UICollectionViewLeftAlignedLayout)?.minimumLineSpacing = 30
+            //($0.collectionViewLayout as? UICollectionViewLeftAlignedLayout)?.minimumInteritemSpacing = 50
+            ($0.collectionViewLayout as? UICollectionViewFlowLayout)?.itemSize = .init(
+                width: 200,
+                height: 100
+            )
+            ($0.collectionViewLayout as? UICollectionViewFlowLayout)?.headerReferenceSize = .init(
+                width: 300,
+                height: 200
+            )
             $0.register(
                 supplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
                 withClass: BookSectionHeader.self
@@ -53,7 +62,7 @@ final class BooksScreen: UIViewController {
             $0.register(cellType: BookCell.self)
             view.addSubview($0)
             $0.snp.makeConstraints { make in
-                make.leading.bottom.trailing.equalToSuperview()
+                make.leading.bottom.trailing.equalToSuperview().inset(20)
                 make.top.equalTo(searchBar.snp.bottom)
             }
         }
@@ -64,8 +73,6 @@ final class BooksScreen: UIViewController {
                 make.edges.equalToSuperview()
             }
         }
-
-        view.backgroundColor = .green
 
         Task { [weak loadingView, weak viewModel] in
             loadingView?.show()
