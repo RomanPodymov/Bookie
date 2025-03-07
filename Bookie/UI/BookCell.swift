@@ -6,6 +6,7 @@
 //  Copyright © 2025 Bookie. All rights reserved.
 //
 
+import Fashion
 import Reusable
 import UIKit
 
@@ -24,7 +25,7 @@ class BookCell: UICollectionViewCell, Reusable {
             }
         }
 
-        titleLabel = .init().then {
+        titleLabel = .init(styles: [Style.titleLabel]).then {
             contentView.addSubview($0)
             $0.snp.makeConstraints { make in
                 make.top.trailing.equalToSuperview()
@@ -32,7 +33,7 @@ class BookCell: UICollectionViewCell, Reusable {
             }
         }
 
-        authorLabel = .init().then {
+        authorLabel = .init(styles: [Style.subtitleLabel]).then {
             contentView.addSubview($0)
             $0.snp.makeConstraints { make in
                 make.trailing.equalToSuperview()

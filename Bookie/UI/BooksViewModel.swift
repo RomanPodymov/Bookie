@@ -24,8 +24,9 @@ enum BookLanguage: String {
     // swiftlint:enable identifier_name
 }
 
-typealias DataSetItemType = ArraySection<String, Book>
-typealias DataSetType = [ArraySection<String, Book>]
+typealias DataSetKeyType = Set<String>
+typealias DataSetItemType = ArraySection<DataSetKeyType, Book>
+typealias DataSetType = [ArraySection<DataSetKeyType, Book>]
 
 class BooksViewModel {
     unowned var screen: AnyBooksScreen!
@@ -59,8 +60,8 @@ class BooksViewModel {
                     book.volumeInfo.language.flatMap { BookLanguage(rawValue: $0) } ?? .default
                 )
             }
-            let newSet = [String: [Book]](grouping: newSetFiltered, by: {
-                $0.volumeInfo.categories?.first ?? ""
+            let newSet = [DataSetKeyType: [Book]](grouping: newSetFiltered, by: {
+                $0.volumeInfo.categories.map { .init($0) } ?? .init()
             }).map {
                 DataSetItemType(model: $0.key, elements: $0.value)
             }
@@ -104,6 +105,6 @@ extension Book: ContentIdentifiable, ContentEquatable {
     }
 }
 
-extension String: @retroactive ContentIdentifiable, @retroactive ContentEquatable {}
+extension Set<String>: @retroactive ContentIdentifiable, @retroactive ContentEquatable {}
 
 extension ArraySection: @unchecked @retroactive Sendable {}

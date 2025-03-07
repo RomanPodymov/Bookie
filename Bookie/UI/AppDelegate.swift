@@ -6,6 +6,7 @@
 //  Copyright © 2025 Bookie. All rights reserved.
 //
 
+import Fashion
 @preconcurrency import Swinject
 import Then
 import UIKit
@@ -21,6 +22,9 @@ let dependenciesContainer = {
     result.register(AnyCoordinator.self) { _ in
         Coordinator()
     }.inObjectScope(.container)
+    result.register(Stylesheet.self) { _ in
+        MainStylesheet()
+    }.inObjectScope(.container)
     return result
 }()
 
@@ -32,6 +36,9 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         _: UIApplication,
         didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
+        dependenciesContainer.resolve(Stylesheet.self).map {
+            Fashion.register(stylesheets: [$0])
+        }
         setupWindow()
         return true
     }
