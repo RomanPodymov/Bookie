@@ -10,20 +10,21 @@ import UIKit
 
 class Coordinator: AnyCoordinator {
     private var window: UIWindow?
-    private var searchText = ""
+    private var searchText = "Karel"
 
     func set(window: UIWindow) {
         self.window = window
     }
 
     func openHomeScren() async {
-        await MainActor.run { [weak window] in
-            window?.rootViewController = BooksScreen()
+        await MainActor.run { [weak window, searchText] in
+            window?.rootViewController = BooksScreen(searchText: searchText)
         }
         await animateScrenChange()
     }
 
-    func openDetailScreen(_ data: VolumeInfo, searchText _: String) async {
+    func openDetailScreen(_ data: VolumeInfo, searchText: String) async {
+        self.searchText = searchText
         await MainActor.run { [weak window] in
             window?.rootViewController = BookScreen(data)
         }

@@ -8,6 +8,7 @@
 
 import SwiftUI
 
+// TODO: SwiftUI version
 struct BooksScreenRootView: View {
     var body: some View {
         Text("Hello")
@@ -16,6 +17,8 @@ struct BooksScreenRootView: View {
 
 final class BooksScreenSwiftUI: UIHostingController<BooksScreenRootView>, AnyBooksScreen {
     func onNewDataReceived(oldSet _: DataSetType, newSet _: DataSetType) async {}
+
+    func onSearchTextChanged(_: String) async {}
 
     init() {
         super.init(rootView: BooksScreenRootView())

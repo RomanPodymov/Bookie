@@ -11,8 +11,9 @@ import DifferenceKit
 import Foundation
 import Moya
 
-protocol AnyBooksScreen: AnyObject {
+protocol AnyBooksScreen: AnyObject, Sendable {
     func onNewDataReceived(oldSet: DataSetType, newSet: DataSetType) async
+    func onSearchTextChanged(_ searchText: String) async
 }
 
 enum BookLanguage: String {
@@ -28,18 +29,29 @@ typealias DataSetKeyType = Set<String>
 typealias DataSetItemType = ArraySection<DataSetKeyType, Book>
 typealias DataSetType = [ArraySection<DataSetKeyType, Book>]
 
-class BooksViewModel {
+final class BooksViewModel {
     unowned var screen: AnyBooksScreen!
 
-    var searchText: String? = "King"
+    var searchText: String? {
+        didSet {
+            _Concurrency.Task.detached { [weak screen, searchText] in
+                await screen?.onSearchTextChanged(searchText ?? "")
+            }
+        }
+    }
+
     var allowedLanguages: Set<BookLanguage> = [.cs, .en]
     private var data: BookResponse?
     private var oldSet: DataSetType = .init()
     private var newSet: DataSetType = .init()
 
-    init(screen: AnyBooksScreen!, data: BookResponse? = nil) {
+    init(screen: AnyBooksScreen!, searchText: String, data: BookResponse? = nil) {
         self.screen = screen
+        self.searchText = searchText
         self.data = data
+        _Concurrency.Task.detached { [weak screen, searchText] in
+            await screen?.onSearchTextChanged(searchText)
+        }
     }
 
     func reloadData() async {

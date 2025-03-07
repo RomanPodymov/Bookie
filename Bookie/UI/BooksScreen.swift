@@ -18,12 +18,22 @@ final class BooksScreen: UIViewController {
     private unowned var rootView: UICollectionView!
     private unowned var loadingView: LoadingView!
 
-    private lazy var viewModel = BooksViewModel(screen: self)
+    private var viewModel: BooksViewModel!
+
+    init(searchText: String) {
+        super.init(nibName: nil, bundle: nil)
+        viewModel = BooksViewModel(screen: self, searchText: searchText)
+    }
+
+    required init?(coder _: NSCoder) {
+        nil
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         searchBar = .init(config: .init()).then {
+            $0.text = viewModel.searchText
             $0.delegate = self
             view.addSubview($0)
             $0.snp.makeConstraints { make in
@@ -125,6 +135,18 @@ extension BooksScreen: AnyBooksScreen {
             }
         }
         loadingView?.hide()
+    }
+
+    func onSearchTextChanged(_ searchText: String) async {
+        if searchBar == nil {
+            return
+        }
+        await MainActor.run { [weak searchBar] in
+            searchBar?.text = searchText
+        }
+        Task { [weak viewModel] in
+            await viewModel?.reloadData()
+        }
     }
 }
 
