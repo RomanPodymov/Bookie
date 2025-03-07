@@ -170,4 +170,8 @@ extension BooksScreen: UISearchBarDelegate {
             await viewModel?.reloadData()
         }
     }
+
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.resignFirstResponder()
+    }
 }

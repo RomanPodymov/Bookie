@@ -14,7 +14,7 @@ import UIKit
 protocol AnyCoordinator {
     func set(window: UIWindow)
     func openHomeScren() async
-    func openDetailScreen(_ data: VolumeInfo, searchText: String) async
+    func openDetailScreen(_ data: Book, searchText: String) async
 }
 
 let dependenciesContainer = {
