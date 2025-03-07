@@ -10,6 +10,7 @@ import UIKit
 
 class Coordinator: AnyCoordinator {
     private var window: UIWindow?
+    private var searchText = ""
 
     func set(window: UIWindow) {
         self.window = window
@@ -22,7 +23,7 @@ class Coordinator: AnyCoordinator {
         await animateScrenChange()
     }
 
-    func openDetailScreen(_ data: VolumeInfo) async {
+    func openDetailScreen(_ data: VolumeInfo, searchText _: String) async {
         await MainActor.run { [weak window] in
             window?.rootViewController = BookScreen(data)
         }

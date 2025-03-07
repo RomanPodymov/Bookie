@@ -16,6 +16,7 @@ import UIKit
 final class BooksScreen: UIViewController {
     private unowned var searchBar: SHSearchBar!
     private unowned var rootView: UICollectionView!
+    private unowned var loadingView: LoadingView!
 
     private lazy var viewModel = BooksViewModel(screen: self)
 
@@ -47,10 +48,17 @@ final class BooksScreen: UIViewController {
             }
         }
 
+        loadingView = .init(styles: [Style.loadingView]).then {
+            view.addSubview($0)
+            $0.snp.makeConstraints { make in
+                make.edges.equalToSuperview()
+            }
+        }
+
         view.backgroundColor = .green
 
-        Task { [weak viewModel] in
-            NVActivityIndicatorPresenter.sharedInstance.startAnimating(.init(message: "Loading"))
+        Task { [weak loadingView, weak viewModel] in
+            loadingView?.show()
 
             await viewModel?.reloadData()
         }
@@ -100,9 +108,10 @@ extension BooksScreen: UICollectionViewDataSource {
 
 extension BooksScreen: UICollectionViewDelegate {
     func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        Task {
-            await viewModel.data(for: indexPath).mapAsync {
-                await dependenciesContainer.resolve(AnyCoordinator.self)?.openDetailScreen($0)
+        Task { [weak viewModel] in
+            let searchText = viewModel?.searchText ?? ""
+            await viewModel?.data(for: indexPath).mapAsync {
+                await dependenciesContainer.resolve(AnyCoordinator.self)?.openDetailScreen($0, searchText: searchText)
             }
         }
     }
@@ -115,7 +124,7 @@ extension BooksScreen: AnyBooksScreen {
                 viewModel?.on(newSet: collection)
             }
         }
-        NVActivityIndicatorPresenter.sharedInstance.stopAnimating()
+        loadingView?.hide()
     }
 }
 

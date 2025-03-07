@@ -12,6 +12,7 @@ import UIKit
 enum Style: String, StringConvertible {
     case titleLabel
     case subtitleLabel
+    case loadingView
 
     var string: String {
         rawValue
@@ -29,6 +30,12 @@ final class MainStylesheet: Stylesheet {
         register(Style.subtitleLabel) { (label: UILabel) in
             Task { @MainActor in
                 label.textColor = .white
+            }
+        }
+
+        register(Style.loadingView) { (loadingView: UIView) in
+            Task { @MainActor in
+                loadingView.backgroundColor = .init(red: 0.5, green: 0.5, blue: 0.5, alpha: 0.5)
             }
         }
     }
