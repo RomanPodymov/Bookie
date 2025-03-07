@@ -13,6 +13,7 @@ import UIKit
 
 final class BookScreen: UIViewController {
     private unowned var backButton: UIButton!
+    private unowned var openBookButton: UIButton!
     private unowned var bookImage: UIImageView!
 
     private var viewModel: BookViewModel!
@@ -44,7 +45,11 @@ final class BookScreen: UIViewController {
         )
 
         backButton = .init().then {
-            $0.setTitleForAllStates("Back")
+            if let image = UIImage(systemName: "arrowshape.backward.fill") {
+                $0.setImageForAllStates(image)
+            } else {
+                $0.setTitleForAllStates(L10n.BookScreen.buttonBack)
+            }
             $0.addAction(.init(handler: { _ in
                 Task {
                     await dependenciesContainer.resolve(AnyCoordinator.self)?.openHomeScren()
@@ -53,6 +58,24 @@ final class BookScreen: UIViewController {
             view.addSubview($0)
             $0.snp.makeConstraints { make in
                 make.leading.top.equalToSuperview()
+            }
+        }
+        openBookButton = .init().then {
+            if let image = UIImage(systemName: "book") {
+                $0.setImageForAllStates(image)
+            } else {
+                $0.setTitleForAllStates(L10n.BookScreen.buttonBack)
+            }
+            $0.addAction(.init(handler: { _ in
+                Task {
+                    let stringURL = "ibooks://assetid/2SYhAQAAIAAJ"
+                    let url = URL(string: stringURL)
+                    await UIApplication.shared.open(url!)
+                }
+            }), for: .primaryActionTriggered)
+            view.addSubview($0)
+            $0.snp.makeConstraints { make in
+                make.trailing.top.equalToSuperview()
             }
         }
     }
