@@ -40,7 +40,7 @@ final class BooksScreen: UIViewController {
         super.viewDidLoad()
 
         searchBar = .init().then {
-            $0.text = viewModel.searchText
+            $0.text = viewModel.searchText.value
             $0.delegate = self
             view.addSubview($0)
             $0.snp.makeConstraints { make in
@@ -133,7 +133,7 @@ extension BooksScreen: UICollectionViewDataSource {
 extension BooksScreen: UICollectionViewDelegate {
     func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         Task { [weak viewModel] in
-            let searchText = viewModel?.searchText ?? ""
+            let searchText = viewModel?.searchText.value ?? ""
             await viewModel?.data(for: indexPath).mapAsync {
                 await dependenciesContainer.resolve(AnyCoordinator.self)?.openDetailScreen($0, searchText: searchText)
             }
@@ -171,7 +171,7 @@ extension BooksScreen: AnyBooksScreen {
 
 extension BooksScreen: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange _: String) {
-        viewModel.searchText = searchBar.text
+        viewModel.searchText.send(searchBar.text ?? "")
         Task { [weak viewModel] in
             await viewModel?.reloadData()
         }

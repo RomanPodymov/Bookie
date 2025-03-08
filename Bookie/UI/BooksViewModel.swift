@@ -6,6 +6,7 @@
 //  Copyright © 2025 Bookie. All rights reserved.
 //
 
+import Combine
 import CombineMoya
 import DifferenceKit
 import Foundation
@@ -39,26 +40,23 @@ enum BooksViewModelError: Error {
 final class BooksViewModel {
     unowned var screen: AnyBooksScreen!
 
-    var searchText: String? {
-        didSet {
-            _Concurrency.Task.detached { [weak screen, searchText] in
-                await screen?.onSearchTextChanged(searchText ?? "")
-            }
-        }
-    }
+    let searchText: CurrentValueSubject<String, Never>
 
     var allowedLanguages: Set<BookLanguage> = [.cs, .en]
     private var data: BookResponse?
     private var oldSet: DataSetType = .init()
     private var newSet: DataSetType = .init()
+    private var cancellables = Set<AnyCancellable>()
 
     init(screen: AnyBooksScreen!, searchText: String, data: BookResponse? = nil) {
         self.screen = screen
-        self.searchText = searchText
+        self.searchText = .init(searchText)
         self.data = data
-        _Concurrency.Task.detached { [weak screen, searchText] in
-            await screen?.onSearchTextChanged(searchText)
-        }
+        self.searchText.removeDuplicates().sink { [weak screen] text in
+            _Concurrency.Task { [weak screen] in
+                await screen?.onSearchTextChanged(text)
+            }
+        }.store(in: &cancellables)
     }
 
     func reloadData() async {
@@ -86,11 +84,11 @@ final class BooksViewModel {
     }
 
     private func currentData() async throws (BooksViewModelError) -> BookResponse {
-        throw BooksViewModelError.noData
+        // throw BooksViewModelError.noData
 
         let provider = MoyaProvider<BooksService>()
         do {
-            guard let response = try await provider.requestPublisher(.volumes(query: searchText)).values.first(
+            guard let response = try await provider.requestPublisher(.volumes(query: searchText.value)).values.first(
                 where: { _ in true }
             ) else {
                 throw BooksViewModelError.noData
