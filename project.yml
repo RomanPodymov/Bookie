@@ -38,6 +38,9 @@ packages:
   UICollectionViewLeftAlignedLayout:
     url: https://github.com/mokagio/UICollectionViewLeftAlignedLayout
     version: 1.1.0
+  SwiftAlertView:
+    url: https://github.com/dinhquan/SwiftAlertView
+    version: 2.2.1
 targets:
   BookieApp:
     settings:
@@ -59,6 +62,7 @@ targets:
       - package: DifferenceKit
       - package: NVActivityIndicatorViewExtended
       - package: UICollectionViewLeftAlignedLayout
+      - package: SwiftAlertView
     info:
       path: Bookie/Info.plist
       properties:

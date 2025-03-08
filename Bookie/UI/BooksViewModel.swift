@@ -13,6 +13,7 @@ import Moya
 
 protocol AnyBooksScreen: AnyObject, Sendable {
     func onNewDataReceived(oldSet: DataSetType, newSet: DataSetType) async
+    func onNewDataError(_ error: BooksViewModelError) async
     func onSearchTextChanged(_ searchText: String) async
 }
 
@@ -28,6 +29,12 @@ enum BookLanguage: String {
 typealias DataSetKeyType = Set<String>
 typealias DataSetItemType = ArraySection<DataSetKeyType, Book>
 typealias DataSetType = [ArraySection<DataSetKeyType, Book>]
+
+enum BooksViewModelError: Error {
+    case noData
+    case parseError(Error)
+    case requestError(Error)
+}
 
 final class BooksViewModel {
     unowned var screen: AnyBooksScreen!
@@ -55,14 +62,8 @@ final class BooksViewModel {
     }
 
     func reloadData() async {
-        let provider = MoyaProvider<BooksService>()
         do {
-            guard let response = try await provider.requestPublisher(.volumes(query: searchText)).values.first(
-                where: { _ in true }
-            ) else {
-                return
-            }
-            let books = try JSONDecoder().decode(BookResponse.self, from: response.data)
+            let books = try await currentData()
 
             data = books
             oldSet = newSet
@@ -80,6 +81,24 @@ final class BooksViewModel {
 
             await screen?.onNewDataReceived(oldSet: oldSet, newSet: newSet)
         } catch {}
+    }
+
+    private func currentData() async throws (BooksViewModelError) -> BookResponse {
+        let provider = MoyaProvider<BooksService>()
+        do {
+            guard let response = try await provider.requestPublisher(.volumes(query: searchText)).values.first(
+                where: { _ in true }
+            ) else {
+                throw BooksViewModelError.noData
+            }
+            do {
+                return try JSONDecoder().decode(BookResponse.self, from: response.data)
+            } catch {
+                throw BooksViewModelError.parseError(error)
+            }
+        } catch {
+            throw BooksViewModelError.requestError(error)
+        }
     }
 
     func numberOfItemsInSection(_ section: Int) -> Int {

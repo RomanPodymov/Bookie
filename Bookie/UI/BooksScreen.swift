@@ -10,6 +10,7 @@ import DifferenceKit
 import NVActivityIndicatorView
 import NVActivityIndicatorViewExtended
 import Reusable
+import SwiftAlertView
 import UICollectionViewLeftAlignedLayout
 import UIKit
 
@@ -150,6 +151,10 @@ extension BooksScreen: AnyBooksScreen {
         loadingView?.hide()
     }
 
+    func onNewDataError(_: BooksViewModelError) async {
+        SwiftAlertView.show(title: "", buttonTitles: ["OK"])
+    }
+
     func onSearchTextChanged(_ searchText: String) async {
         if searchBar == nil {
             return
@@ -157,9 +162,9 @@ extension BooksScreen: AnyBooksScreen {
         await MainActor.run { [weak searchBar] in
             searchBar?.text = searchText
         }
-        Task { [weak viewModel] in
+        await Task { [weak viewModel] in
             await viewModel?.reloadData()
-        }
+        }.value
     }
 }
 

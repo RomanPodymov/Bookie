@@ -18,6 +18,8 @@ struct BooksScreenRootView: View {
 final class BooksScreenSwiftUI: UIHostingController<BooksScreenRootView>, AnyBooksScreen {
     func onNewDataReceived(oldSet _: DataSetType, newSet _: DataSetType) async {}
 
+    func onNewDataError(_: BooksViewModelError) async {}
+
     func onSearchTextChanged(_: String) async {}
 
     init() {

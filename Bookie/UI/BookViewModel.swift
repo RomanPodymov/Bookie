@@ -19,7 +19,7 @@ class BookViewModel {
         self.screen = screen
         self.data = data
     }
-    
+
     @MainActor
     func openBook() async {
         await UIApplication.shared.open(
