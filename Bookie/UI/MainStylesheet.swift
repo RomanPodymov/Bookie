@@ -106,8 +106,6 @@ final class MainStylesheet: Stylesheet {
         register(Style.bookScreenMetadataView) { (view: UIView) in
             Task { @MainActor in
                 view.backgroundColor = backgroundColor.withAlphaComponent(0.5)
-                // view.roundCorners(.allCorners, radius: 15)
-                view.addShadow(ofColor: UIColor.black)
             }
         }
     }

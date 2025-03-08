@@ -50,10 +50,11 @@ final class BookScreen: UIViewController {
         metadataRootView = .init(styles: [Style.bookScreenMetadataView]).then {
             view.addSubview($0)
             $0.snp.makeConstraints { make in
-                make.height.equalTo(300)
                 make.leading.bottom.trailing.equalToSuperview().inset(LayoutParams.BookScreen.defaultInset)
             }
         }
+
+        setupLabels()
     }
 
     private func setupButtons() {
@@ -93,6 +94,28 @@ final class BookScreen: UIViewController {
             $0.snp.makeConstraints { make in
                 make.trailing.top.equalToSuperview().inset(LayoutParams.BookScreen.defaultInset)
             }
+        }
+    }
+
+    private func setupLabels() {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        metadataRootView.addSubview(stackView)
+        let labelsData = [
+            viewModel.data?.volumeInfo.title,
+            viewModel.data?.volumeInfo.authors?.joined(separator: ", "),
+            viewModel.data?.volumeInfo.publishedDate,
+            viewModel.data?.volumeInfo.description,
+        ]
+        let labels = labelsData.map { labelData in
+            UILabel(styles: [Style.titleLabel]).then {
+                $0.numberOfLines = 4
+                $0.text = labelData
+            }
+        }
+        stackView.addArrangedSubviews(labels)
+        stackView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
         }
     }
 }
