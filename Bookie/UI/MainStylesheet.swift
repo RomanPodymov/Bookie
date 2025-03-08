@@ -24,6 +24,7 @@ struct LayoutParams {
 }
 
 enum Style: String, StringConvertible {
+    case headerLabel
     case titleLabel
     case subtitleLabel
     case loadingView
@@ -32,6 +33,7 @@ enum Style: String, StringConvertible {
     case bookSectionHeader
     case bookCell
     case bookCellThumb
+    case bookScreenMetadataView
 
     var string: String {
         rawValue
@@ -41,6 +43,13 @@ enum Style: String, StringConvertible {
 final class MainStylesheet: Stylesheet {
     func define() {
         let textColor = UIColor.black
+
+        register(Style.headerLabel) { (label: UILabel) in
+            Task { @MainActor in
+                label.font = UIFont.boldSystemFont(ofSize: 24)
+                label.textColor = textColor
+            }
+        }
 
         register(Style.titleLabel) { (label: UILabel) in
             Task { @MainActor in
@@ -91,6 +100,14 @@ final class MainStylesheet: Stylesheet {
         register(Style.bookCellThumb) { (thumb: UIImageView) in
             Task { @MainActor in
                 thumb.addShadow(ofColor: UIColor.black)
+            }
+        }
+
+        register(Style.bookScreenMetadataView) { (view: UIView) in
+            Task { @MainActor in
+                view.backgroundColor = backgroundColor.withAlphaComponent(0.5)
+                // view.roundCorners(.allCorners, radius: 15)
+                view.addShadow(ofColor: UIColor.black)
             }
         }
     }

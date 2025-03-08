@@ -69,6 +69,7 @@ final class BooksScreen: UIViewController {
         }
 
         loadingView = .init(styles: [Style.loadingView]).then {
+            $0.hide()
             view.addSubview($0)
             $0.snp.makeConstraints { make in
                 make.edges.equalToSuperview()

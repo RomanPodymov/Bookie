@@ -16,7 +16,7 @@ class BookSectionHeader: UICollectionReusableView, Reusable {
         super.init(frame: frame)
 
         apply(styles: Style.bookSectionHeader)
-        label = .init(styles: [Style.titleLabel]).then {
+        label = .init(styles: [Style.headerLabel]).then {
             addSubview($0)
             $0.snp.makeConstraints { make in
                 make.edges.equalToSuperview()

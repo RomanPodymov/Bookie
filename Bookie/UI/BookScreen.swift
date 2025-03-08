@@ -15,6 +15,7 @@ final class BookScreen: UIViewController {
     private unowned var backButton: UIButton!
     private unowned var openBookButton: UIButton!
     private unowned var bookImage: UIImageView!
+    private unowned var metadataRootView: UIView!
 
     private var viewModel: BookViewModel!
 
@@ -44,6 +45,18 @@ final class BookScreen: UIViewController {
             )
         )
 
+        setupButtons()
+
+        metadataRootView = .init(styles: [Style.bookScreenMetadataView]).then {
+            view.addSubview($0)
+            $0.snp.makeConstraints { make in
+                make.height.equalTo(300)
+                make.leading.bottom.trailing.equalToSuperview().inset(LayoutParams.BookScreen.defaultInset)
+            }
+        }
+    }
+
+    private func setupButtons() {
         backButton = .init().then {
             if let image = UIImage(systemName: "arrowshape.backward.fill") {
                 $0.setImageForAllStates(image)
@@ -64,6 +77,7 @@ final class BookScreen: UIViewController {
                 make.leading.top.equalToSuperview().inset(LayoutParams.BookScreen.defaultInset)
             }
         }
+
         openBookButton = .init().then {
             if let image = UIImage(systemName: "book") {
                 $0.setImageForAllStates(image)
