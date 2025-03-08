@@ -80,10 +80,14 @@ final class BooksViewModel {
             }
 
             await screen?.onNewDataReceived(oldSet: oldSet, newSet: newSet)
-        } catch {}
+        } catch {
+            await screen?.onNewDataError(error)
+        }
     }
 
     private func currentData() async throws (BooksViewModelError) -> BookResponse {
+        throw BooksViewModelError.noData
+
         let provider = MoyaProvider<BooksService>()
         do {
             guard let response = try await provider.requestPublisher(.volumes(query: searchText)).values.first(

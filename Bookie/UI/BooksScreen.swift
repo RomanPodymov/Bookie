@@ -152,6 +152,7 @@ extension BooksScreen: AnyBooksScreen {
     }
 
     func onNewDataError(_: BooksViewModelError) async {
+        loadingView?.hide()
         SwiftAlertView.show(title: "", buttonTitles: ["OK"])
     }
 
