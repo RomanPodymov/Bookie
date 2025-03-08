@@ -12,8 +12,10 @@ import UIKit
 struct LayoutParams {
     enum BooksScren {
         static let defaultInset = CGFloat(20)
-        static let sectionHeaderSize = CGSize(width: 300, height: 100)
-        static let itemSize = CGSize(width: 300, height: 300)
+        static let smallerInset = CGFloat(10)
+        static let sectionHeaderSize = CGSize(width: 300, height: 80)
+        static let itemSize = CGSize(width: 300, height: 250)
+        static let thumbImageRatio = CGFloat(3)
     }
 
     enum BookScreen {

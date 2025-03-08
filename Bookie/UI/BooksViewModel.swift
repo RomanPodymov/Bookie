@@ -70,9 +70,10 @@ final class BooksViewModel {
             oldSet = newSet
 
             let newSetFiltered = books.items.filter { book in
-                allowedLanguages.contains(
-                    book.volumeInfo.language.flatMap { BookLanguage(rawValue: $0) } ?? .default
-                )
+                guard let language = book.volumeInfo.language.flatMap({ BookLanguage(rawValue: $0) }) else {
+                    return false
+                }
+                return allowedLanguages.contains(language)
             }
             let newSet = [DataSetKeyType: [Book]](grouping: newSetFiltered, by: {
                 $0.volumeInfo.categories.map { .init($0) } ?? .init()

@@ -52,8 +52,8 @@ final class BooksScreen: UIViewController {
             $0.apply(styles: Style.booksScreenRootView)
             $0.dataSource = self
             $0.delegate = self
-            ($0.collectionViewLayout as? UICollectionViewFlowLayout)?.minimumLineSpacing = 5
-            ($0.collectionViewLayout as? UICollectionViewFlowLayout)?.minimumInteritemSpacing = 5
+            ($0.collectionViewLayout as? UICollectionViewFlowLayout)?.minimumLineSpacing = LayoutParams.BooksScren.smallerInset
+            ($0.collectionViewLayout as? UICollectionViewFlowLayout)?.minimumInteritemSpacing = LayoutParams.BooksScren.smallerInset
             ($0.collectionViewLayout as? UICollectionViewFlowLayout)?.itemSize = LayoutParams.BooksScren.itemSize
             ($0.collectionViewLayout as? UICollectionViewFlowLayout)?.headerReferenceSize = LayoutParams.BooksScren.sectionHeaderSize
             $0.register(

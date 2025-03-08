@@ -22,24 +22,24 @@ class BookCell: UICollectionViewCell, Reusable {
             contentView.addSubview($0)
             $0.snp.makeConstraints { make in
                 make.leading.top.equalToSuperview()
-                make.width.equalTo(contentView).dividedBy(3)
+                make.width.equalTo(contentView).dividedBy(LayoutParams.BooksScren.thumbImageRatio)
             }
         }
 
         titleLabel = .init(styles: [Style.titleLabel]).then {
             contentView.addSubview($0)
             $0.snp.makeConstraints { make in
-                make.top.trailing.equalToSuperview()
-                make.leading.equalTo(thumbnailView.snp.trailing)
+                make.top.equalToSuperview()
+                make.trailing.equalToSuperview().inset(LayoutParams.BooksScren.defaultInset)
+                make.leading.equalTo(thumbnailView.snp.trailing).inset(-1 * LayoutParams.BooksScren.defaultInset)
             }
         }
 
         authorLabel = .init(styles: [Style.subtitleLabel]).then {
             contentView.addSubview($0)
             $0.snp.makeConstraints { make in
-                make.trailing.equalToSuperview()
-                make.top.equalTo(titleLabel.snp.bottom)
-                make.leading.equalTo(titleLabel)
+                make.top.equalTo(titleLabel.snp.bottom).inset(-1 * LayoutParams.BooksScren.smallerInset)
+                make.leading.trailing.equalTo(titleLabel)
             }
         }
     }
