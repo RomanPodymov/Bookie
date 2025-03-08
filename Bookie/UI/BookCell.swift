@@ -21,7 +21,8 @@ class BookCell: UICollectionViewCell, Reusable {
         thumbnailView = .init().then {
             contentView.addSubview($0)
             $0.snp.makeConstraints { make in
-                make.bottom.leading.top.equalToSuperview()
+                make.leading.top.equalToSuperview()
+                make.width.equalTo(contentView).dividedBy(3)
             }
         }
 

@@ -7,5 +7,7 @@
 */
 
 "books_screen.category_unknown" = "Unknown";
+"books_screen.error_loading_data.title" = "Unable to load data";
+"books_screen.error_loading_data.button_ok" = "OK";
 "book_screen.button_back" = "Back";
 "book_screen.button_book" = "Book";

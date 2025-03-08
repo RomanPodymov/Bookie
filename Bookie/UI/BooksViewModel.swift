@@ -91,8 +91,6 @@ final class BooksViewModel {
     }
 
     private func currentData() async throws (BooksViewModelError) -> BookResponse {
-        // throw BooksViewModelError.noData
-
         let provider = MoyaProvider<BooksService>()
         do {
             guard let response = try await provider.requestPublisher(.volumes(query: searchText.value)).values.first(

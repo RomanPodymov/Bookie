@@ -52,12 +52,16 @@ final class BookScreen: UIViewController {
             }
             $0.addAction(.init(handler: { [weak viewModel] _ in
                 Task { [weak viewModel] in
-                    await dependenciesContainer.resolve(AnyCoordinator.self)?.openHomeScreen(previousBook: viewModel?.data)
+                    await dependenciesContainer.resolve(
+                        AnyCoordinator.self
+                    )?.openHomeScreen(
+                        previousBook: viewModel?.data
+                    )
                 }
             }), for: .primaryActionTriggered)
             view.addSubview($0)
             $0.snp.makeConstraints { make in
-                make.leading.top.equalToSuperview()
+                make.leading.top.equalToSuperview().inset(LayoutParams.BookScreen.defaultInset)
             }
         }
         openBookButton = .init().then {
@@ -73,7 +77,7 @@ final class BookScreen: UIViewController {
             }), for: .primaryActionTriggered)
             view.addSubview($0)
             $0.snp.makeConstraints { make in
-                make.trailing.top.equalToSuperview()
+                make.trailing.top.equalToSuperview().inset(LayoutParams.BookScreen.defaultInset)
             }
         }
     }

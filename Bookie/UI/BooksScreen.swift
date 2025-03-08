@@ -52,16 +52,10 @@ final class BooksScreen: UIViewController {
             $0.apply(styles: Style.booksScreenRootView)
             $0.dataSource = self
             $0.delegate = self
-            // ($0.collectionViewLayout as? UICollectionViewLeftAlignedLayout)?.minimumLineSpacing = 30
-            // ($0.collectionViewLayout as? UICollectionViewLeftAlignedLayout)?.minimumInteritemSpacing = 50
-            ($0.collectionViewLayout as? UICollectionViewFlowLayout)?.itemSize = .init(
-                width: 200,
-                height: 100
-            )
-            ($0.collectionViewLayout as? UICollectionViewFlowLayout)?.headerReferenceSize = .init(
-                width: 300,
-                height: 200
-            )
+            ($0.collectionViewLayout as? UICollectionViewFlowLayout)?.minimumLineSpacing = 5
+            ($0.collectionViewLayout as? UICollectionViewFlowLayout)?.minimumInteritemSpacing = 5
+            ($0.collectionViewLayout as? UICollectionViewFlowLayout)?.itemSize = LayoutParams.BooksScren.itemSize
+            ($0.collectionViewLayout as? UICollectionViewFlowLayout)?.headerReferenceSize = LayoutParams.BooksScren.sectionHeaderSize
             $0.register(
                 supplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
                 withClass: BookSectionHeader.self
@@ -69,7 +63,7 @@ final class BooksScreen: UIViewController {
             $0.register(cellType: BookCell.self)
             view.addSubview($0)
             $0.snp.makeConstraints { make in
-                make.leading.bottom.trailing.equalToSuperview().inset(20)
+                make.leading.bottom.trailing.equalToSuperview().inset(LayoutParams.BooksScren.defaultInset)
                 make.top.equalTo(searchBar.snp.bottom)
             }
         }
@@ -159,7 +153,10 @@ extension BooksScreen: AnyBooksScreen {
 
     func onNewDataError(_: BooksViewModelError) async {
         loadingView?.hide()
-        SwiftAlertView.show(title: "", buttonTitles: ["OK"])
+        SwiftAlertView.show(
+            title: L10n.BooksScreen.ErrorLoadingData.title,
+            buttonTitles: [L10n.BooksScreen.ErrorLoadingData.buttonOk]
+        )
     }
 
     func onSearchTextChanged(_ searchText: String) async {

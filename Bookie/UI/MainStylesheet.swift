@@ -9,6 +9,18 @@
 import Fashion
 import UIKit
 
+struct LayoutParams {
+    enum BooksScren {
+        static let defaultInset = CGFloat(20)
+        static let sectionHeaderSize = CGSize(width: 300, height: 100)
+        static let itemSize = CGSize(width: 300, height: 300)
+    }
+
+    enum BookScreen {
+        static let defaultInset = CGFloat(20)
+    }
+}
+
 enum Style: String, StringConvertible {
     case titleLabel
     case subtitleLabel
