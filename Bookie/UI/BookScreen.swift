@@ -50,9 +50,9 @@ final class BookScreen: UIViewController {
             } else {
                 $0.setTitleForAllStates(L10n.BookScreen.buttonBack)
             }
-            $0.addAction(.init(handler: { _ in
-                Task {
-                    await dependenciesContainer.resolve(AnyCoordinator.self)?.openHomeScren()
+            $0.addAction(.init(handler: { [weak viewModel] _ in
+                Task { [weak viewModel] in
+                    await dependenciesContainer.resolve(AnyCoordinator.self)?.openHomeScreen(previousBook: viewModel?.data)
                 }
             }), for: .primaryActionTriggered)
             view.addSubview($0)

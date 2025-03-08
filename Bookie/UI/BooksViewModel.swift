@@ -42,6 +42,7 @@ final class BooksViewModel {
     unowned var screen: AnyBooksScreen!
 
     let searchText: CurrentValueSubject<String, Never>
+    var previousBook: Book?
 
     var allowedLanguages: Set<BookLanguage> = [.cs, .en]
     private var data: BookResponse?
@@ -49,9 +50,10 @@ final class BooksViewModel {
     private var newSet: DataSetType = .init()
     private var cancellables = Set<AnyCancellable>()
 
-    init(screen: AnyBooksScreen!, searchText: String, data: BookResponse? = nil) {
+    init(screen: AnyBooksScreen!, searchText: String, previousBook: Book?, data: BookResponse? = nil) {
         self.screen = screen
         self.searchText = .init(searchText)
+        self.previousBook = previousBook
         self.data = data
         self.searchText.removeDuplicates().sink { [weak screen] text in
             _Concurrency.Task { [weak screen] in
@@ -60,10 +62,7 @@ final class BooksViewModel {
         }.store(in: &cancellables)
     }
 
-    var task: _Concurrency.Task<Void, Never>?
-
     func reloadData() async {
-        task?.cancel()
         do {
             let books = try await currentData()
 
@@ -85,12 +84,7 @@ final class BooksViewModel {
                 lhs.model.joined() < rhs.model.joined()
             }
 
-            task = _Concurrency.Task.detached { [task, weak screen, oldSet] in
-                if let task, task.isCancelled {
-                    return
-                }
-                await screen?.onNewDataReceived(oldSet: oldSet, newSet: newSet)
-            }
+            await screen?.onNewDataReceived(oldSet: oldSet, newSet: newSet)
         } catch {
             await screen?.onNewDataError(error)
         }
@@ -140,6 +134,14 @@ final class BooksViewModel {
         data(for: indexPath)?.elements.lazy.compactMap(\.volumeInfo)[
             safe: indexPath.item
         ]
+    }
+
+    func indexPath(for book: Book) -> IndexPath? {
+        newSet.enumerated().lazy.compactMap { sectionIndex, section in
+            section.elements.enumerated().lazy.compactMap { itemIndex, currentBook in
+                currentBook.id == book.id ? IndexPath(item: itemIndex, section: sectionIndex) : nil
+            }.first
+        }.first
     }
 
     func on(newSet: DataSetType) {

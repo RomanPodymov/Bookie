@@ -23,9 +23,9 @@ final class BooksScreen: UIViewController {
 
     private var viewModel: BooksViewModel!
 
-    init(searchText: String) {
+    init(searchText: String, previousBook: Book?) {
         super.init(nibName: nil, bundle: nil)
-        viewModel = BooksViewModel(screen: self, searchText: searchText)
+        viewModel = BooksViewModel(screen: self, searchText: searchText, previousBook: previousBook)
     }
 
     required init?(coder _: NSCoder) {
@@ -146,6 +146,12 @@ extension BooksScreen: AnyBooksScreen {
         await MainActor.run { [weak viewModel] in
             rootView.reload(using: StagedChangeset(source: oldSet, target: newSet)) { [weak viewModel] collection in
                 viewModel?.on(newSet: collection)
+                if let previousBook = viewModel?.previousBook, let indexPath = viewModel?.indexPath(for: previousBook) {
+                    viewModel?.previousBook = nil
+                    DispatchQueue.main.async {
+                        self.rootView.scrollToItem(at: indexPath, at: .centeredVertically, animated: false)
+                    }
+                }
             }
         }
         loadingView?.hide()

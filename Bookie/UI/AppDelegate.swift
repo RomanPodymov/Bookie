@@ -13,7 +13,7 @@ import UIKit
 
 protocol AnyCoordinator {
     func set(window: UIWindow)
-    func openHomeScren() async
+    func openHomeScreen(previousBook: Book?) async
     func openDetailScreen(_ data: Book, searchText: String) async
 }
 
@@ -48,7 +48,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
             dependenciesContainer.resolve(AnyCoordinator.self)?.set(window: $0)
         }
         Task {
-            await dependenciesContainer.resolve(AnyCoordinator.self)?.openHomeScren()
+            await dependenciesContainer.resolve(AnyCoordinator.self)?.openHomeScreen(previousBook: nil)
             window?.makeKeyAndVisible()
         }
     }
