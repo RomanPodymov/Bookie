@@ -40,8 +40,8 @@ extension UIView {
 }
 
 extension ImageLinks {
-    var homeScreenImage: String? {
-        let paths: Set<KeyPath<ImageLinks, String?>> = [
+    var allImagePaths: Set<KeyPath<ImageLinks, String?>> {
+        [
             \.smallThumbnail,
             \.thumbnail,
             \.small,
@@ -49,6 +49,13 @@ extension ImageLinks {
             \.large,
             \.extraLarge,
         ]
-        return paths.lazy.compactMap { self[keyPath: $0] }.first
+    }
+
+    var homeScreenImage: String? {
+        allImagePaths.lazy.compactMap { self[keyPath: $0] }.first
+    }
+
+    var detailScreenImage: String? {
+        allImagePaths.reversed().lazy.compactMap { self[keyPath: $0] }.first
     }
 }

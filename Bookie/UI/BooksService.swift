@@ -15,7 +15,7 @@ enum BooksService {
 
 extension BooksService: TargetType {
     var baseURL: URL {
-        URL(string: "https://www.googleapis.com")!
+        URL(unsafeString: "https://www.googleapis.com")
     }
 
     var path: String {

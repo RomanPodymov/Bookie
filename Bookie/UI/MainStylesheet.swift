@@ -31,6 +31,7 @@ enum Style: String, StringConvertible {
     case booksScreenRootView
     case bookSectionHeader
     case bookCell
+    case bookCellThumb
 
     var string: String {
         rawValue
@@ -61,7 +62,7 @@ final class MainStylesheet: Stylesheet {
             }
         }
 
-        let backgroundColor = UIColor.yellow
+        let backgroundColor = UIColor.white
 
         register(Style.booksScreenView) { (booksScreenView: UIView) in
             Task { @MainActor in
@@ -84,6 +85,12 @@ final class MainStylesheet: Stylesheet {
         register(Style.bookCell) { (cell: BookCell) in
             Task { @MainActor in
                 cell.backgroundColor = backgroundColor
+            }
+        }
+
+        register(Style.bookCellThumb) { (thumb: UIImageView) in
+            Task { @MainActor in
+                thumb.addShadow(ofColor: UIColor.black)
             }
         }
     }

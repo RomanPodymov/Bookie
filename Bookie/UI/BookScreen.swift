@@ -39,8 +39,8 @@ final class BookScreen: UIViewController {
         bookImage.kf.setImage(
             with: .network(
                 URL(
-                    string: viewModel.data?.volumeInfo.imageLinks?.homeScreenImage
-                ) ?? .init(unsafeString: "")
+                    unsafeString: viewModel.data?.volumeInfo.imageLinks?.detailScreenImage ?? ""
+                )
             )
         )
 

@@ -18,7 +18,7 @@ class BookCell: UICollectionViewCell, Reusable {
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        thumbnailView = .init().then {
+        thumbnailView = .init(styles: [Style.bookCellThumb]).then {
             contentView.addSubview($0)
             $0.snp.makeConstraints { make in
                 make.leading.top.equalToSuperview()

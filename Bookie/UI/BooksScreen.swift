@@ -175,9 +175,6 @@ extension BooksScreen: AnyBooksScreen {
 extension BooksScreen: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange _: String) {
         viewModel.searchText.send(searchBar.text ?? "")
-        Task { [weak viewModel] in
-            await viewModel?.reloadData()
-        }
     }
 
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {

@@ -24,8 +24,8 @@ class BookViewModel {
     func openBook() async {
         await UIApplication.shared.open(
             URL(
-                string: "https://play.google.com/store/books/details?id=" + (data?.id ?? "")
-            )!
+                unsafeString: "https://play.google.com/store/books/details?id=" + (data?.id ?? "")
+            )
         )
     }
 }
