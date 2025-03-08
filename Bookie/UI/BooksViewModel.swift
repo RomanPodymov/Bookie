@@ -11,6 +11,7 @@ import CombineMoya
 import DifferenceKit
 import Foundation
 import Moya
+import OrderedCollections
 
 protocol AnyBooksScreen: AnyObject, Sendable {
     func onNewDataReceived(oldSet: DataSetType, newSet: DataSetType) async
@@ -27,7 +28,7 @@ enum BookLanguage: String {
     // swiftlint:enable identifier_name
 }
 
-typealias DataSetKeyType = Set<String>
+typealias DataSetKeyType = OrderedSet<String>
 typealias DataSetItemType = ArraySection<DataSetKeyType, Book>
 typealias DataSetType = [ArraySection<DataSetKeyType, Book>]
 
@@ -59,7 +60,10 @@ final class BooksViewModel {
         }.store(in: &cancellables)
     }
 
+    var task: _Concurrency.Task<Void, Never>?
+
     func reloadData() async {
+        task?.cancel()
         do {
             let books = try await currentData()
 
@@ -73,11 +77,20 @@ final class BooksViewModel {
             }
             let newSet = [DataSetKeyType: [Book]](grouping: newSetFiltered, by: {
                 $0.volumeInfo.categories.map { .init($0) } ?? .init()
-            }).map {
+            }).mapValues {
+                $0.sorted(by: \.volumeInfo.title)
+            }.map {
                 DataSetItemType(model: $0.key, elements: $0.value)
+            }.sorted { lhs, rhs in
+                lhs.model.joined() < rhs.model.joined()
             }
 
-            await screen?.onNewDataReceived(oldSet: oldSet, newSet: newSet)
+            task = _Concurrency.Task.detached { [task, weak screen, oldSet] in
+                if let task, task.isCancelled {
+                    return
+                }
+                await screen?.onNewDataReceived(oldSet: oldSet, newSet: newSet)
+            }
         } catch {
             await screen?.onNewDataError(error)
         }
@@ -144,6 +157,6 @@ extension Book: ContentIdentifiable, ContentEquatable {
     }
 }
 
-extension Set<String>: @retroactive ContentIdentifiable, @retroactive ContentEquatable {}
+extension DataSetKeyType: @retroactive ContentIdentifiable, @retroactive ContentEquatable {}
 
 extension ArraySection: @unchecked @retroactive Sendable {}

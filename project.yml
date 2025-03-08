@@ -41,6 +41,9 @@ packages:
   SwiftAlertView:
     url: https://github.com/dinhquan/SwiftAlertView
     version: 2.2.1
+  OrderedCollections:
+    url: https://github.com/apple/swift-collections
+    version: 1.1.4
 targets:
   BookieApp:
     settings:
@@ -63,6 +66,7 @@ targets:
       - package: NVActivityIndicatorViewExtended
       - package: UICollectionViewLeftAlignedLayout
       - package: SwiftAlertView
+      - package: OrderedCollections
     info:
       path: Bookie/Info.plist
       properties:
