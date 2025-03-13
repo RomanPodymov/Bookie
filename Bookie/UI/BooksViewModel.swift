@@ -30,7 +30,7 @@ enum BookLanguage: String {
 
 typealias DataSetKeyType = OrderedSet<String>
 typealias DataSetItemType = ArraySection<DataSetKeyType, Book>
-typealias DataSetType = [ArraySection<DataSetKeyType, Book>]
+typealias DataSetType = [DataSetItemType]
 
 enum BooksViewModelError: Error {
     case noData
@@ -148,7 +148,7 @@ final class BooksViewModel {
     }
 }
 
-extension Book: ContentIdentifiable, ContentEquatable {
+extension Book: Differentiable {
     var differenceIdentifier: String {
         id
     }
@@ -158,6 +158,6 @@ extension Book: ContentIdentifiable, ContentEquatable {
     }
 }
 
-extension DataSetKeyType: @retroactive ContentIdentifiable, @retroactive ContentEquatable {}
+extension DataSetKeyType: Differentiable {}
 
 extension ArraySection: @unchecked @retroactive Sendable {}
