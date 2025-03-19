@@ -7,12 +7,14 @@
 //
 
 @testable import BookieApp
-import XCTest
+import Testing
 
-class BookieTests: XCTestCase {
+@Suite
+struct BookieTests {
+    @Test
     func testAsyncMap() async {
         let mappedValue = await (10 as Int?).mapAsync(someAsyncFunc)
-        XCTAssertEqual(mappedValue, 100)
+        #expect(mappedValue == 101)
     }
 
     private func someAsyncFunc(previousValue: Int) async -> Int {
