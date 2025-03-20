@@ -10,10 +10,11 @@ import Combine
 import CombineMoya
 import DifferenceKit
 import Foundation
+import JobInterviewAssignmentKit
 import Moya
 import OrderedCollections
 
-protocol AnyBooksScreen: AnyObject, Sendable {
+protocol AnyBooksScreen: AnyScreen, Sendable {
     func onNewDataReceived(oldSet: DataSetType, newSet: DataSetType) async
     func onNewDataError(_ error: BooksViewModelError) async
     func onSearchTextChanged(_ searchText: String) async
@@ -38,9 +39,7 @@ enum BooksViewModelError: Error {
     case requestError(Error)
 }
 
-final class BooksViewModel {
-    unowned var screen: AnyBooksScreen!
-
+final class BooksViewModel: AnyViewModel {
     let searchText: CurrentValueSubject<String, Never>
     var previousBook: Book?
 
@@ -51,8 +50,8 @@ final class BooksViewModel {
     private var cancellables = Set<AnyCancellable>()
 
     init(screen: AnyBooksScreen!, searchText: String, previousBook: Book?, data: BookResponse? = nil) {
-        self.screen = screen
         self.searchText = .init(searchText)
+        super.init(screen: screen)
         self.previousBook = previousBook
         self.data = data
         self.searchText.removeDuplicates().sink { [weak screen] text in
@@ -85,9 +84,9 @@ final class BooksViewModel {
                 lhs.model.joined() < rhs.model.joined()
             }
 
-            await screen?.onNewDataReceived(oldSet: oldSet, newSet: newSet)
+            await (screen as? AnyBooksScreen)?.onNewDataReceived(oldSet: oldSet, newSet: newSet)
         } catch {
-            await screen?.onNewDataError(error)
+            await (screen as? AnyBooksScreen)?.onNewDataError(error)
         }
     }
 

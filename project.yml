@@ -44,6 +44,8 @@ packages:
   OrderedCollections:
     url: https://github.com/apple/swift-collections
     version: 1.1.4
+  JobInterviewAssignmentKit:
+    path: ../JobInterviewAssignmentKit
 targets:
   BookieApp:
     settings:
@@ -67,6 +69,7 @@ targets:
       - package: UICollectionViewLeftAlignedLayout
       - package: SwiftAlertView
       - package: OrderedCollections
+      - package: JobInterviewAssignmentKit
     info:
       path: Bookie/Info.plist
       properties:
