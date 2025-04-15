@@ -39,7 +39,7 @@ enum BooksViewModelError: Error {
     case requestError(Error)
 }
 
-final class BooksViewModel: AnyViewModel {
+final class BooksViewModel: AnyViewModel<BooksScreen> {
     let searchText: CurrentValueSubject<String, Never>
     var previousBook: Book?
 
@@ -49,7 +49,7 @@ final class BooksViewModel: AnyViewModel {
     private var newSet: DataSetType = .init()
     private var cancellables = Set<AnyCancellable>()
 
-    init(screen: AnyBooksScreen!, searchText: String, previousBook: Book?, data: BookResponse? = nil) {
+    init(screen: BooksScreen!, searchText: String, previousBook: Book?, data: BookResponse? = nil) {
         self.searchText = .init(searchText)
         super.init(screen: screen)
         self.previousBook = previousBook

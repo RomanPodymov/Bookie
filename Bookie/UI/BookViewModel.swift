@@ -11,10 +11,10 @@ import UIKit
 
 protocol AnyBookScreen: AnyScreen {}
 
-final class BookViewModel: AnyViewModel {
+final class BookViewModel: AnyViewModel<BookScreen> {
     var data: Book?
 
-    init(screen: AnyBookScreen!, data: Book? = nil) {
+    init(screen: BookScreen!, data: Book? = nil) {
         super.init(screen: screen)
         self.data = data
     }
