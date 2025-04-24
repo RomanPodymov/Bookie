@@ -34,12 +34,6 @@ public typealias DataSetKeyType = OrderedSet<String>
 typealias DataSetItemType = ArraySection<DataSetKeyType, Book>
 typealias DataSetType = [DataSetItemType]
 
-extension DataSetItemType: @retroactive Identifiable {
-    public var id: DataSetKeyType {
-        differenceIdentifier
-    }
-}
-
 enum BooksViewModelError: Error {
     case noData
     case parseError(Error)

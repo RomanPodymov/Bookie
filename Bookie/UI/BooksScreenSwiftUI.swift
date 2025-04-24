@@ -12,25 +12,25 @@ import SwiftUI
 extension Book: Identifiable {}
 
 struct SectionStuff: Identifiable {
-    var section: String
-    var items: [Book]
+    let section: DataSetKeyType
+    let items: [Book]
 
-    var id: String {
+    var id: DataSetKeyType {
         section
     }
 }
 
-final class ContentViewState: ObservableObject {
+final class BooksScreenRootViewState: ObservableObject {
     @Published var data: [SectionStuff] = .init()
 }
 
 struct BooksScreenRootView: View {
-    @ObservedObject var data = ContentViewState()
+    @ObservedObject var state = BooksScreenRootViewState()
 
     var body: some View {
         List {
-            ForEach(data.data) { section in
-                Section(header: Text(section.section)) {
+            ForEach(state.data) { section in
+                Section(header: Text(section.section.joined(separator: ", "))) {
                     ForEach(section.items) { book in
                         Text(book.volumeInfo.title)
                     }
@@ -53,9 +53,9 @@ final class BooksScreenSwiftUI: UIHostingController<BooksScreenRootView>, AnyBoo
     }
 
     func onNewDataReceived(oldSet _: DataSetType, newSet: DataSetType) async {
-        rootView.data.data = newSet.map {
+        rootView.state.data = newSet.map {
             .init(
-                section: $0.differenceIdentifier.joined(separator: ", "),
+                section: $0.differenceIdentifier,
                 items: $0.elements
             )
         }
