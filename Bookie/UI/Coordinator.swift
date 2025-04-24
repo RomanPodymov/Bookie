@@ -9,8 +9,8 @@
 import UIKit
 
 class Coordinator: AnyCoordinator {
-    private weak var window: UIWindow?
-    private var searchText = "Karel"
+    weak var window: UIWindow?
+    var searchText = "Karel"
 
     func set(window: UIWindow) {
         self.window = window
@@ -31,12 +31,21 @@ class Coordinator: AnyCoordinator {
         await animateScrenChange()
     }
 
-    private func animateScrenChange() async {
+    fileprivate func animateScrenChange() async {
         guard let window else {
             return
         }
         let options: UIView.AnimationOptions = .transitionCrossDissolve
         let duration: TimeInterval = 0.3
         await UIView.transition(with: window, duration: duration, options: options, animations: {})
+    }
+}
+
+class CoordinatorSwiftUI: Coordinator {
+    override func openHomeScreen(previousBook: Book?) async {
+        await MainActor.run { [weak window, searchText] in
+            window?.rootViewController = BooksScreenSwiftUI(searchText: searchText, previousBook: previousBook)
+        }
+        await animateScrenChange()
     }
 }

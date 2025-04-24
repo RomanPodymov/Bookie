@@ -6,17 +6,60 @@
 //  Copyright © 2025 Bookie. All rights reserved.
 //
 
+import CombineMoya
 import SwiftUI
 
-// TODO: SwiftUI version
+extension Book: Identifiable {}
+
+struct SectionStuff: Identifiable {
+    var section: String
+    var items: [Book]
+
+    var id: String {
+        section
+    }
+}
+
+final class ContentViewState: ObservableObject {
+    @Published var data: [SectionStuff] = .init()
+}
+
 struct BooksScreenRootView: View {
+    @ObservedObject var data = ContentViewState()
+
     var body: some View {
-        Text("Hello")
+        List {
+            ForEach(data.data) { section in
+                Section(header: Text(section.section)) {
+                    ForEach(section.items) { book in
+                        Text(book.volumeInfo.title)
+                    }
+                }
+            }
+        }
     }
 }
 
 final class BooksScreenSwiftUI: UIHostingController<BooksScreenRootView>, AnyBooksScreen {
-    func onNewDataReceived(oldSet _: DataSetType, newSet _: DataSetType) async {}
+    private var viewModel: BooksViewModel!
+
+    init(searchText: String, previousBook: Book?) {
+        super.init(rootView: BooksScreenRootView())
+        viewModel = .init(screen: self, searchText: searchText, previousBook: previousBook)
+
+        Task { [weak viewModel] in
+            await viewModel?.reloadData()
+        }
+    }
+
+    func onNewDataReceived(oldSet _: DataSetType, newSet: DataSetType) async {
+        rootView.data.data = newSet.map {
+            .init(
+                section: $0.differenceIdentifier.joined(separator: ", "),
+                items: $0.elements
+            )
+        }
+    }
 
     func onNewDataError(_: BooksViewModelError) async {}
 
