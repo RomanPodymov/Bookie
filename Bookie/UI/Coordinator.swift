@@ -18,7 +18,7 @@ class Coordinator: AnyCoordinator {
 
     func openHomeScreen(previousBook: Book?) async {
         await MainActor.run { [weak window, searchText] in
-            window?.rootViewController = BooksScreen(searchText: searchText, previousBook: previousBook)
+            window?.rootViewController = Self.createRootScreen(searchText: searchText, previousBook: previousBook)
         }
         await animateScrenChange()
     }
@@ -29,6 +29,11 @@ class Coordinator: AnyCoordinator {
             window?.rootViewController = BookScreen(data)
         }
         await animateScrenChange()
+    }
+
+    @MainActor
+    fileprivate class func createRootScreen(searchText: String, previousBook: Book?) -> (AnyBooksScreen & UIViewController) {
+        BooksScreen(searchText: searchText, previousBook: previousBook)
     }
 
     fileprivate func animateScrenChange() async {
@@ -42,10 +47,8 @@ class Coordinator: AnyCoordinator {
 }
 
 class CoordinatorSwiftUI: Coordinator {
-    override func openHomeScreen(previousBook: Book?) async {
-        await MainActor.run { [weak window, searchText] in
-            window?.rootViewController = BooksScreenSwiftUI(searchText: searchText, previousBook: previousBook)
-        }
-        await animateScrenChange()
+    @MainActor
+    override fileprivate class func createRootScreen(searchText: String, previousBook: Book?) -> (AnyBooksScreen & UIViewController) {
+        BooksScreenSwiftUI(searchText: searchText, previousBook: previousBook)
     }
 }
