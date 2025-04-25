@@ -15,7 +15,7 @@ class BookieTests: XCTestCase {
         XCTAssertEqual(mappedValue, 100)
     }
 
-    private func someAsyncFunc(previousValue: Int) async -> Int {
+    @Sendable private func someAsyncFunc(previousValue: Int) async -> Int {
         _ = try? await Task.sleep(nanoseconds: 1_000_000_000)
         return previousValue * previousValue
     }
