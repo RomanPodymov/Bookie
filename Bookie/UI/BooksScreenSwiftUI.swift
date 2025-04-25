@@ -77,7 +77,7 @@ final class BooksScreenSwiftUI: UIHostingController<BooksScreenRootView>, AnyBoo
         super.init(
             rootView: BooksScreenRootView(
                 selectedBook: Self.selectedBook(searchText: searchText, previousBook: previousBook),
-                searchText: Self.searchTextBinding(viewModel: viewModel!)
+                searchText: Self.searchTextBinding(viewModel: viewModel)
             )
         )
         viewModel.screen = self
