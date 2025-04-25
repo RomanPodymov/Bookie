@@ -22,12 +22,16 @@ extension DataSetItemType: @retroactive Identifiable {
 }
 
 struct BooksScreenRootView: View {
-    @ObservedObject var state = BooksScreenRootViewState()
+    @ObservedObject var state: BooksScreenRootViewState
     @Binding private var selectedBook: Book?
     @Binding private var searchText: String
     @State private var showCancelButton = false
 
-    init(state: BooksScreenRootViewState = BooksScreenRootViewState(), selectedBook: Binding<Book?>, searchText: Binding<String>) {
+    init(
+        state: BooksScreenRootViewState = BooksScreenRootViewState(),
+        selectedBook: Binding<Book?>,
+        searchText: Binding<String>
+    ) {
         self.state = state
         _selectedBook = selectedBook
         _searchText = searchText
@@ -39,13 +43,13 @@ struct BooksScreenRootView: View {
                 TextField("", text: $searchText, onEditingChanged: { _ in
                     self.showCancelButton = true
                 }, onCommit: {})
-                    .padding(.leading, 20)
+                    .padding(.leading, LayoutParams.BooksScren.defaultInset)
                 if showCancelButton {
                     Button(L10n.BooksScreen.Button.cancel) {
                         self.searchText = ""
                         self.showCancelButton = false
                     }
-                    .padding(.trailing, 20)
+                    .padding(.trailing, LayoutParams.BooksScren.defaultInset)
                 }
             }
             List {
@@ -69,7 +73,22 @@ final class BooksScreenSwiftUI: UIHostingController<BooksScreenRootView>, AnyBoo
     private var viewModel: BooksViewModel!
 
     init(searchText: String, previousBook: Book?) {
-        let selectedBook: Binding<Book?> = .init(get: {
+        viewModel = .init(screen: nil, searchText: searchText, previousBook: previousBook)
+        super.init(
+            rootView: BooksScreenRootView(
+                selectedBook: Self.selectedBook(searchText: searchText, previousBook: previousBook),
+                searchText: Self.searchTextBinding(viewModel: viewModel!)
+            )
+        )
+        viewModel.screen = self
+
+        Task { [weak viewModel] in
+            await viewModel?.reloadData()
+        }
+    }
+
+    private static func selectedBook(searchText: String, previousBook: Book?) -> Binding<Book?> {
+        .init(get: {
             previousBook
         }, set: { book in
             guard let book else {
@@ -81,23 +100,14 @@ final class BooksScreenSwiftUI: UIHostingController<BooksScreenRootView>, AnyBoo
                 )?.openDetailScreen(book, searchText: searchText)
             }
         })
-        viewModel = .init(screen: nil, searchText: searchText, previousBook: previousBook)
-        let searchTextBinding: Binding<String> = .init(get: { [viewModel] in
+    }
+
+    private static func searchTextBinding(viewModel: BooksViewModel) -> Binding<String> {
+        .init(get: { [weak viewModel] in
             viewModel?.searchText.value ?? ""
-        }, set: { [viewModel] in
+        }, set: { [weak viewModel] in
             viewModel?.searchText.send($0)
         })
-        super.init(
-            rootView: BooksScreenRootView(
-                selectedBook: selectedBook,
-                searchText: searchTextBinding
-            )
-        )
-        viewModel.screen = self
-
-        Task { [weak viewModel] in
-            await viewModel?.reloadData()
-        }
     }
 
     func onNewDataReceived(oldSet _: DataSetType, newSet: DataSetType) async {
