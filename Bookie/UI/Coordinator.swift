@@ -15,8 +15,8 @@ protocol AnyCoordinator {
 }
 
 class Coordinator: AnyCoordinator {
-    weak var window: UIWindow?
-    var searchText = "Karel"
+    private weak var window: UIWindow?
+    private var searchText = "Karel"
 
     func set(window: UIWindow) {
         self.window = window
