@@ -42,28 +42,7 @@ enum Style: String, StringConvertible {
 
 final class MainStylesheet: Stylesheet {
     func define() {
-        let textColor = UIColor.black
-
-        register(Style.headerLabel) { (label: UILabel) in
-            Task { @MainActor in
-                label.font = UIFont.boldSystemFont(ofSize: 24)
-                label.textColor = textColor
-            }
-        }
-
-        register(Style.titleLabel) { (label: UILabel) in
-            Task { @MainActor in
-                label.font = UIFont.boldSystemFont(ofSize: 20)
-                label.textColor = textColor
-            }
-        }
-
-        register(Style.subtitleLabel) { (label: UILabel) in
-            Task { @MainActor in
-                label.font = UIFont.systemFont(ofSize: 18)
-                label.textColor = textColor
-            }
-        }
+        registerLabels()
 
         register(Style.loadingView) { (loadingView: UIView) in
             Task { @MainActor in
@@ -106,6 +85,31 @@ final class MainStylesheet: Stylesheet {
         register(Style.bookScreenMetadataView) { (view: UIView) in
             Task { @MainActor in
                 view.backgroundColor = backgroundColor.withAlphaComponent(0.5)
+            }
+        }
+    }
+
+    private func registerLabels() {
+        let textColor = UIColor.black
+
+        register(Style.headerLabel) { (label: UILabel) in
+            Task { @MainActor in
+                label.font = UIFont.boldSystemFont(ofSize: 24)
+                label.textColor = textColor
+            }
+        }
+
+        register(Style.titleLabel) { (label: UILabel) in
+            Task { @MainActor in
+                label.font = UIFont.boldSystemFont(ofSize: 20)
+                label.textColor = textColor
+            }
+        }
+
+        register(Style.subtitleLabel) { (label: UILabel) in
+            Task { @MainActor in
+                label.font = UIFont.systemFont(ofSize: 18)
+                label.textColor = textColor
             }
         }
     }

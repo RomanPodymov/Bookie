@@ -40,9 +40,9 @@ struct BooksScreenRootView: View {
                     ForEach(section.items) { book in
                         Button(action: {
                             selectedBook = book
-                        }) {
+                        }, label: {
                             Text(book.volumeInfo.title)
-                        }
+                        })
                     }
                 }
             }

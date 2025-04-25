@@ -11,16 +11,10 @@ import Fashion
 import Then
 import UIKit
 
-protocol AnyCoordinator {
-    func set(window: UIWindow)
-    func openHomeScreen(previousBook: Book?) async
-    func openDetailScreen(_ data: Book, searchText: String) async
-}
-
 let dependenciesContainer = {
     let result = Container()
     result.register(AnyCoordinator.self) { _ in
-        CoordinatorSwiftUI()
+        Coordinator()
     }.inObjectScope(.container)
     result.register(Stylesheet.self) { _ in
         MainStylesheet()
