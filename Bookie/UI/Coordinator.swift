@@ -26,7 +26,7 @@ class Coordinator: AnyCoordinator {
         await MainActor.run { [weak window, searchText] in
             window?.rootViewController = Self.createRootScreen(searchText: searchText, previousBook: previousBook)
         }
-        await animateScrenChange()
+        await animateScreenChange()
     }
 
     func openDetailScreen(_ data: Book, searchText: String) async {
@@ -34,7 +34,7 @@ class Coordinator: AnyCoordinator {
         await MainActor.run { [weak window] in
             window?.rootViewController = Self.createDetailScreen(data)
         }
-        await animateScrenChange()
+        await animateScreenChange()
     }
 
     @MainActor
