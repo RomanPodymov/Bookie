@@ -36,6 +36,8 @@ jobs:
         name: List the state of Mint modules
         continue-on-error: true
         run: mint list
+      - name: Folder for swiftgen
+        run: mkdir Bookie/Generated && touch Bookie/Generated/Strings.swift
       - name: Generate Xcode project
         run: mint bootstrap && mint run xcodegen
       - name: Build and test iOS
