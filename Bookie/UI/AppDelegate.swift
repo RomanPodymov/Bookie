@@ -14,7 +14,7 @@ import UIKit
 let dependenciesContainer = {
     let result = Container()
     result.register(AnyCoordinator.self) { _ in
-        Coordinator()
+        CoordinatorSwiftUI()
     }.inObjectScope(.container)
     result.register(Stylesheet.self) { _ in
         MainStylesheet()

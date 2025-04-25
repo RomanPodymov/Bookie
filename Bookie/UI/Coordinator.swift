@@ -32,7 +32,7 @@ class Coordinator: AnyCoordinator {
     func openDetailScreen(_ data: Book, searchText: String) async {
         self.searchText = searchText
         await MainActor.run { [weak window] in
-            window?.rootViewController = BookScreen(data)
+            window?.rootViewController = Self.createDetailScreen(data)
         }
         await animateScrenChange()
     }
@@ -43,6 +43,13 @@ class Coordinator: AnyCoordinator {
         previousBook: Book?
     ) -> (AnyBooksScreen & UIViewController) {
         BooksScreen(searchText: searchText, previousBook: previousBook)
+    }
+
+    @MainActor
+    fileprivate class func createDetailScreen(
+        _ data: Book
+    ) -> (AnyBookScreen & UIViewController) {
+        BookScreen(data)
     }
 
     fileprivate func animateScrenChange() async {
@@ -62,5 +69,12 @@ class CoordinatorSwiftUI: Coordinator {
         previousBook: Book?
     ) -> (AnyBooksScreen & UIViewController) {
         BooksScreenSwiftUI(searchText: searchText, previousBook: previousBook)
+    }
+
+    @MainActor
+    override fileprivate class func createDetailScreen(
+        _ data: Book
+    ) -> (AnyBookScreen & UIViewController) {
+        BookScreenSwiftUI(data)
     }
 }

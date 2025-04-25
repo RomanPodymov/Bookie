@@ -8,7 +8,10 @@
 
 import UIKit
 
-protocol AnyBookScreen: AnyObject {}
+protocol AnyBookScreen: AnyObject {
+    @MainActor
+    init(_ data: Book?)
+}
 
 class BookViewModel {
     unowned var screen: AnyBookScreen!
