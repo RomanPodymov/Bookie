@@ -13,12 +13,16 @@ import UIKit
 
 let dependenciesContainer = {
     let result = Container()
+    let objectScope: ObjectScope = .container
     result.register(AnyCoordinator.self) { _ in
         CoordinatorSwiftUI()
-    }.inObjectScope(.container)
+    }.inObjectScope(objectScope)
     result.register(Stylesheet.self) { _ in
         MainStylesheet()
-    }.inObjectScope(.container)
+    }.inObjectScope(objectScope)
+    result.register(RemoteDataSource.self) { _ in
+        GoogleRemoteDataSource()
+    }.inObjectScope(objectScope)
     return result
 }()
 
