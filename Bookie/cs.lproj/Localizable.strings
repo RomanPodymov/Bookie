@@ -6,6 +6,7 @@
   
 */
 
+"books_screen.button.cancel" = "Zrušit";
 "books_screen.category_unknown" = "Neznámá kategorie";
 "books_screen.error_loading_data.title" = "Nejde načíst data";
 "books_screen.error_loading_data.button_ok" = "OK";

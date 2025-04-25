@@ -6,6 +6,7 @@
   
 */
 
+"books_screen.button.cancel" = "Cancel";
 "books_screen.category_unknown" = "Unknown";
 "books_screen.error_loading_data.title" = "Unable to load data";
 "books_screen.error_loading_data.button_ok" = "OK";
