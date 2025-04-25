@@ -6,43 +6,58 @@
 //  Copyright © 2025 Bookie. All rights reserved.
 //
 
-import CombineMoya
+import OrderedCollections
 import SwiftUI
 
 extension Book: Identifiable {}
 
-struct SectionStuff: Identifiable {
-    let section: DataSetKeyType
-    let items: [Book]
-
-    var id: DataSetKeyType {
-        section
-    }
+final class BooksScreenRootViewState: ObservableObject {
+    @Published var data: DataSetType = .init()
 }
 
-final class BooksScreenRootViewState: ObservableObject {
-    @Published var data: [SectionStuff] = .init()
+extension DataSetItemType: @retroactive Identifiable {
+    public var id: DataSetKeyType {
+        differenceIdentifier
+    }
 }
 
 struct BooksScreenRootView: View {
     @ObservedObject var state = BooksScreenRootViewState()
-    @Binding var selectedBook: Book?
+    @Binding private var selectedBook: Book?
+    @Binding private var searchText: String
+    @State private var showCancelButton = false
 
-    init(state: BooksScreenRootViewState = BooksScreenRootViewState(), selectedBook: Binding<Book?>) {
+    init(state: BooksScreenRootViewState = BooksScreenRootViewState(), selectedBook: Binding<Book?>, searchText: Binding<String>) {
         self.state = state
         _selectedBook = selectedBook
+        _searchText = searchText
     }
 
     var body: some View {
-        List {
-            ForEach(state.data) { section in
-                Section(header: Text(section.section.joined(separator: ", "))) {
-                    ForEach(section.items) { book in
-                        Button(action: {
-                            selectedBook = book
-                        }, label: {
-                            Text(book.volumeInfo.title)
-                        })
+        VStack {
+            HStack {
+                TextField("", text: $searchText, onEditingChanged: { _ in
+                    self.showCancelButton = true
+                }, onCommit: {})
+                    .padding(.leading, 20)
+                if showCancelButton {
+                    Button(L10n.BooksScreen.Button.cancel) {
+                        self.searchText = ""
+                        self.showCancelButton = false
+                    }
+                    .padding(.trailing, 20)
+                }
+            }
+            List {
+                ForEach(state.data) { section in
+                    Section(header: Text(section.model.joined(separator: ", "))) {
+                        ForEach(section.elements) { book in
+                            Button(action: {
+                                selectedBook = book
+                            }, label: {
+                                Text(book.volumeInfo.title)
+                            })
+                        }
                     }
                 }
             }
@@ -54,7 +69,7 @@ final class BooksScreenSwiftUI: UIHostingController<BooksScreenRootView>, AnyBoo
     private var viewModel: BooksViewModel!
 
     init(searchText: String, previousBook: Book?) {
-        super.init(rootView: BooksScreenRootView(selectedBook: .init(get: {
+        let selectedBook: Binding<Book?> = .init(get: {
             previousBook
         }, set: { book in
             guard let book else {
@@ -65,8 +80,20 @@ final class BooksScreenSwiftUI: UIHostingController<BooksScreenRootView>, AnyBoo
                     AnyCoordinator.self
                 )?.openDetailScreen(book, searchText: searchText)
             }
-        })))
-        viewModel = .init(screen: self, searchText: searchText, previousBook: previousBook)
+        })
+        viewModel = .init(screen: nil, searchText: searchText, previousBook: previousBook)
+        let searchTextBinding: Binding<String> = .init(get: { [viewModel] in
+            viewModel?.searchText.value ?? ""
+        }, set: { [viewModel] in
+            viewModel?.searchText.send($0)
+        })
+        super.init(
+            rootView: BooksScreenRootView(
+                selectedBook: selectedBook,
+                searchText: searchTextBinding
+            )
+        )
+        viewModel.screen = self
 
         Task { [weak viewModel] in
             await viewModel?.reloadData()
@@ -74,21 +101,18 @@ final class BooksScreenSwiftUI: UIHostingController<BooksScreenRootView>, AnyBoo
     }
 
     func onNewDataReceived(oldSet _: DataSetType, newSet: DataSetType) async {
-        rootView.state.data = newSet.map {
-            .init(
-                section: $0.differenceIdentifier,
-                items: $0.elements
-            )
-        }
+        rootView.state.data = newSet
     }
 
     func onNewDataError(_: BooksViewModelError) async {}
 
-    func onSearchTextChanged(_: String) async {}
+    func onSearchTextChanged(_: String) async {
+        await Task { [weak viewModel] in
+            await viewModel?.reloadData()
+        }.value
+    }
 
     @MainActor @preconcurrency dynamic required init?(coder _: NSCoder) {
         nil
     }
-
-    func onNewDataReceived() async {}
 }

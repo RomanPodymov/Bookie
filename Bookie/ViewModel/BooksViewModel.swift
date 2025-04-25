@@ -57,8 +57,8 @@ final class BooksViewModel {
         self.searchText = .init(searchText)
         self.previousBook = previousBook
         self.data = data
-        self.searchText.removeDuplicates().sink { [weak screen] text in
-            _Concurrency.Task { [weak screen] in
+        self.searchText.removeDuplicates().sink { [weak self] text in
+            _Concurrency.Task { [weak screen = self?.screen] in
                 await screen?.onSearchTextChanged(text)
             }
         }.store(in: &cancellables)
