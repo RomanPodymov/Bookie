@@ -15,6 +15,8 @@ import Moya
 import OrderedCollections
 
 protocol AnyBooksScreen: AnyScreen, Sendable {
+    @MainActor
+    init(searchText: String, previousBook: Book?)
     func onNewDataReceived(oldSet: DataSetType, newSet: DataSetType) async
     func onNewDataError(_ error: BooksViewModelError) async
     func onSearchTextChanged(_ searchText: String) async
@@ -29,7 +31,7 @@ enum BookLanguage: String {
     // swiftlint:enable identifier_name
 }
 
-typealias DataSetKeyType = OrderedSet<String>
+public typealias DataSetKeyType = OrderedSet<String>
 typealias DataSetItemType = ArraySection<DataSetKeyType, Book>
 typealias DataSetType = [DataSetItemType]
 
@@ -54,8 +56,8 @@ final class BooksViewModel: AnyViewModel<BooksScreen> {
         super.init(screen: screen)
         self.previousBook = previousBook
         self.data = data
-        self.searchText.removeDuplicates().sink { [weak screen] text in
-            _Concurrency.Task { [weak screen] in
+        self.searchText.removeDuplicates().sink { [weak self] text in
+            _Concurrency.Task { [weak screen = self?.screen] in
                 await screen?.onSearchTextChanged(text)
             }
         }.store(in: &cancellables)
@@ -91,7 +93,11 @@ final class BooksViewModel: AnyViewModel<BooksScreen> {
     }
 
     private func currentData() async throws (BooksViewModelError) -> BookResponse {
-        let provider = MoyaProvider<BooksService>()
+        let provider = MoyaProvider<BooksService>(plugins: [
+            NetworkLoggerPlugin(configuration: .init(
+                logOptions: [.requestBody, .successResponseBody, .errorResponseBody]
+            )),
+        ])
         do {
             guard let response = try await provider.requestPublisher(.volumes(query: searchText.value)).values.first(
                 where: { _ in true }

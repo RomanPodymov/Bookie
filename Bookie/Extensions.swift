@@ -9,7 +9,9 @@
 import UIKit
 
 extension Optional {
-    func mapAsync<E, U>(_ transform: @Sendable (Wrapped) async throws (E) -> U) async throws (E) -> U? where E: Error, U: ~Copyable {
+    func mapAsync<E, U>(
+        _ transform: @Sendable (Wrapped) async throws (E) -> U
+    ) async throws (E) -> U? where E: Error, U: ~Copyable {
         if let self {
             return try await transform(self)
         } else {

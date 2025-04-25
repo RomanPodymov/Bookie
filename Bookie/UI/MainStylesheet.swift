@@ -23,6 +23,12 @@ struct LayoutParams {
     }
 }
 
+enum AppColors {
+    static let textColor = UIColor.black
+    static let backgroundColor = UIColor.white
+    static let metadataBackgroundColor = backgroundColor.withAlphaComponent(0.5)
+}
+
 enum Style: String, StringConvertible {
     case headerLabel
     case titleLabel
@@ -42,28 +48,7 @@ enum Style: String, StringConvertible {
 
 final class MainStylesheet: Stylesheet {
     func define() {
-        let textColor = UIColor.black
-
-        register(Style.headerLabel) { (label: UILabel) in
-            Task { @MainActor in
-                label.font = UIFont.boldSystemFont(ofSize: 24)
-                label.textColor = textColor
-            }
-        }
-
-        register(Style.titleLabel) { (label: UILabel) in
-            Task { @MainActor in
-                label.font = UIFont.boldSystemFont(ofSize: 20)
-                label.textColor = textColor
-            }
-        }
-
-        register(Style.subtitleLabel) { (label: UILabel) in
-            Task { @MainActor in
-                label.font = UIFont.systemFont(ofSize: 18)
-                label.textColor = textColor
-            }
-        }
+        registerLabels()
 
         register(Style.loadingView) { (loadingView: UIView) in
             Task { @MainActor in
@@ -71,7 +56,7 @@ final class MainStylesheet: Stylesheet {
             }
         }
 
-        let backgroundColor = UIColor.white
+        let backgroundColor = AppColors.backgroundColor
 
         register(Style.booksScreenView) { (booksScreenView: UIView) in
             Task { @MainActor in
@@ -105,7 +90,32 @@ final class MainStylesheet: Stylesheet {
 
         register(Style.bookScreenMetadataView) { (view: UIView) in
             Task { @MainActor in
-                view.backgroundColor = backgroundColor.withAlphaComponent(0.5)
+                view.backgroundColor = AppColors.metadataBackgroundColor
+            }
+        }
+    }
+
+    private func registerLabels() {
+        let textColor = AppColors.textColor
+
+        register(Style.headerLabel) { (label: UILabel) in
+            Task { @MainActor in
+                label.font = UIFont.boldSystemFont(ofSize: 24)
+                label.textColor = textColor
+            }
+        }
+
+        register(Style.titleLabel) { (label: UILabel) in
+            Task { @MainActor in
+                label.font = UIFont.boldSystemFont(ofSize: 20)
+                label.textColor = textColor
+            }
+        }
+
+        register(Style.subtitleLabel) { (label: UILabel) in
+            Task { @MainActor in
+                label.font = UIFont.systemFont(ofSize: 18)
+                label.textColor = textColor
             }
         }
     }

@@ -9,9 +9,12 @@
 import JobInterviewAssignmentKit
 import UIKit
 
-protocol AnyBookScreen: AnyScreen {}
+protocol AnyBookScreen: AnyScreen {
+    @MainActor
+    init(_ data: Book?)
+}
 
-final class BookViewModel: AnyViewModel<BookScreen> {
+class BookViewModel: AnyViewModel<BookScreen> {
     var data: Book?
 
     init(screen: BookScreen!, data: Book? = nil) {
