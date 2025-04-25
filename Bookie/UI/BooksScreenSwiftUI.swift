@@ -26,13 +26,23 @@ final class BooksScreenRootViewState: ObservableObject {
 
 struct BooksScreenRootView: View {
     @ObservedObject var state = BooksScreenRootViewState()
+    @Binding var selectedBook: Book?
+
+    init(state: BooksScreenRootViewState = BooksScreenRootViewState(), selectedBook: Binding<Book?>) {
+        self.state = state
+        _selectedBook = selectedBook
+    }
 
     var body: some View {
         List {
             ForEach(state.data) { section in
                 Section(header: Text(section.section.joined(separator: ", "))) {
                     ForEach(section.items) { book in
-                        Text(book.volumeInfo.title)
+                        Button(action: {
+                            selectedBook = book
+                        }) {
+                            Text(book.volumeInfo.title)
+                        }
                     }
                 }
             }
@@ -44,7 +54,18 @@ final class BooksScreenSwiftUI: UIHostingController<BooksScreenRootView>, AnyBoo
     private var viewModel: BooksViewModel!
 
     init(searchText: String, previousBook: Book?) {
-        super.init(rootView: BooksScreenRootView())
+        super.init(rootView: BooksScreenRootView(selectedBook: .init(get: {
+            previousBook
+        }, set: { book in
+            guard let book else {
+                return
+            }
+            Task {
+                await dependenciesContainer.resolve(
+                    AnyCoordinator.self
+                )?.openDetailScreen(book, searchText: searchText)
+            }
+        })))
         viewModel = .init(screen: self, searchText: searchText, previousBook: previousBook)
 
         Task { [weak viewModel] in
@@ -64,10 +85,6 @@ final class BooksScreenSwiftUI: UIHostingController<BooksScreenRootView>, AnyBoo
     func onNewDataError(_: BooksViewModelError) async {}
 
     func onSearchTextChanged(_: String) async {}
-
-    init() {
-        super.init(rootView: BooksScreenRootView())
-    }
 
     @MainActor @preconcurrency dynamic required init?(coder _: NSCoder) {
         nil
