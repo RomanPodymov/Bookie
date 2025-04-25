@@ -18,13 +18,36 @@ struct BookScreenRootView: View {
             KFImage(URL(
                 unsafeString: data?.volumeInfo.imageLinks?.detailScreenImage ?? ""
             ))
-            Button {
-                backPressed = true
-            } label: {
-                Image(systemName: "arrowshape.backward.fill")
-            }
+            .resizable()
+            .aspectRatio(contentMode: .fill)
             VStack {
-                Text(data?.volumeInfo.title ?? "")
+                HStack {
+                    Button {
+                        backPressed = true
+                    } label: {
+                        Image(systemName: "arrowshape.backward.fill")
+                    }
+                    Spacer()
+                }
+                .padding(.leading, LayoutParams.BooksScren.defaultInset)
+                .padding(.top, LayoutParams.BooksScren.defaultInset)
+                Spacer()
+                HStack {
+                    VStack(alignment: .leading) {
+                        Text(data?.volumeInfo.title ?? "")
+                            .foregroundStyle(Color(AppColors.textColor))
+                        Text(data?.volumeInfo.authors?.joined(separator: ", ") ?? "")
+                            .foregroundStyle(Color(AppColors.textColor))
+                        Text(data?.volumeInfo.publishedDate ?? "")
+                            .foregroundStyle(Color(AppColors.textColor))
+                        Text(data?.volumeInfo.description ?? "")
+                            .foregroundStyle(Color(AppColors.textColor))
+                    }
+                    .background(Color(AppColors.metadataBackgroundColor))
+                    Spacer()
+                }
+                .padding(.leading, LayoutParams.BooksScren.defaultInset)
+                .padding(.bottom, LayoutParams.BooksScren.defaultInset)
             }
         }
     }
