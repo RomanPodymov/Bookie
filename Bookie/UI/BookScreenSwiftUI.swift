@@ -15,11 +15,13 @@ struct BookScreenRootView: View {
 
     var body: some View {
         ZStack {
-            KFImage(URL(
-                unsafeString: data?.volumeInfo.imageLinks?.detailScreenImage ?? ""
-            ))
-            .resizable()
-            .aspectRatio(contentMode: .fill)
+            if let detailScreenImage = data?.volumeInfo.imageLinks?.detailScreenImage {
+                KFImage(URL(
+                    unsafeString: detailScreenImage
+                ))
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+            }
             VStack {
                 HStack {
                     Button {
