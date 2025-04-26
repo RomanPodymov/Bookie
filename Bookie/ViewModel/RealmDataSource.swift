@@ -19,7 +19,7 @@ struct RealmDataSource: LocalDataSource {
         Realm.Configuration.defaultConfiguration.deleteRealmIfMigrationNeeded = true
     }
 
-    func search(text _: String) async throws (BooksViewModelError) -> BookResponse {
+    func search(text: String) async throws (BooksViewModelError) -> BookResponse {
         do {
             return try await Task { @MainActor in
                 let realm = try await Realm()
@@ -48,7 +48,10 @@ struct RealmDataSource: LocalDataSource {
                         searchInfo: nil
                     )
                 }
-                return BookResponse(kind: "", totalItems: books.count, items: Array(books))
+                let booksForTitle = books.filter { book in
+                    book.volumeInfo.title.contains(text)
+                }
+                return BookResponse(kind: "", totalItems: booksForTitle.count, items: Array(booksForTitle))
 
             }.value
         } catch {
@@ -60,9 +63,6 @@ struct RealmDataSource: LocalDataSource {
         do {
             try await Task { @MainActor in
                 let realm = try await Realm()
-                try realm.write {
-                    realm.deleteAll()
-                }
                 for book in books {
                     try realm.write {
                         let obj = BookRealm()
