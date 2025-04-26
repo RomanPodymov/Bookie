@@ -16,7 +16,7 @@ let dependenciesContainer = {
     let result = Container()
     let objectScope: ObjectScope = .container
     result.register(AnyCoordinator.self) { _ in
-        Coordinator()
+        CoordinatorSwiftUI()
     }.inObjectScope(objectScope)
     result.register(Stylesheet.self) { _ in
         MainStylesheet()
@@ -25,14 +25,11 @@ let dependenciesContainer = {
         GoogleRemoteDataSource()
     }.inObjectScope(objectScope)
     result.register(LocalDataSource.self) { _ in
-        if #available(iOS 17, *) {
+        if #available(iOS 17, *), let container = {
             let configuration = ModelConfiguration(for: BookSwiftData.self)
             let schema = Schema([BookSwiftData.self])
-
-            // swiftlint:disable force_try
-            let container = try! ModelContainer(for: schema, configurations: [configuration])
-            // swiftlint:enable force_try
-
+            return try? ModelContainer(for: schema, configurations: [configuration])
+        }() {
             return SwiftDataSource(modelContainer: container)
         } else {
             return RealmDataSource()

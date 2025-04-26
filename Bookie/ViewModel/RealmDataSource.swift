@@ -52,7 +52,6 @@ struct RealmDataSource: LocalDataSource {
                     book.volumeInfo.title.contains(text)
                 }
                 return BookResponse(kind: "", totalItems: booksForTitle.count, items: Array(booksForTitle))
-
             }.value
         } catch {
             throw BooksViewModelError.noData
