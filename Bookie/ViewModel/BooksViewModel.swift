@@ -65,8 +65,19 @@ final class BooksViewModel {
     }
 
     func reloadData() async {
+        guard let source = dependenciesContainer.resolve(RemoteDataSource.self),
+              let localSource = dependenciesContainer.resolve(LocalDataSource.self)
+        else {
+            return
+        }
         do {
-            let books = try await currentData()
+            let books: BookResponse
+            if let booksRemote = try? await source.search(text: searchText.value) {
+                books = booksRemote
+            } else {
+                books = try await localSource.search(text: searchText.value)
+            }
+            try await localSource.save(books: books.items)
 
             data = books
             oldSet = newSet
@@ -90,28 +101,6 @@ final class BooksViewModel {
             await screen?.onNewDataReceived(oldSet: oldSet, newSet: newSet)
         } catch {
             await screen?.onNewDataError(error)
-        }
-    }
-
-    private func currentData() async throws (BooksViewModelError) -> BookResponse {
-        let provider = MoyaProvider<BooksService>(plugins: [
-            NetworkLoggerPlugin(configuration: .init(
-                logOptions: [.requestBody, .successResponseBody, .errorResponseBody]
-            )),
-        ])
-        do {
-            guard let response = try await provider.requestPublisher(.volumes(query: searchText.value)).values.first(
-                where: { _ in true }
-            ) else {
-                throw BooksViewModelError.noData
-            }
-            do {
-                return try JSONDecoder().decode(BookResponse.self, from: response.data)
-            } catch {
-                throw BooksViewModelError.parseError(error)
-            }
-        } catch {
-            throw BooksViewModelError.requestError(error)
         }
     }
 

@@ -22,7 +22,7 @@ packages:
     version: 5.7.1
   Kingfisher:
     url: https://github.com/onevcat/Kingfisher
-    version: 8.2.0
+    version: 8.3.2
   SwifterSwift:
     url: https://github.com/SwifterSwift/SwifterSwift
     version: 7.0.0
@@ -44,6 +44,9 @@ packages:
   OrderedCollections:
     url: https://github.com/apple/swift-collections
     version: 1.1.4
+  RealmSwift:
+    url: https://github.com/realm/realm-swift.git
+    version: 20.0.2
 targets:
   BookieApp:
     settings:
@@ -67,6 +70,8 @@ targets:
       - package: UICollectionViewLeftAlignedLayout
       - package: SwiftAlertView
       - package: OrderedCollections
+      - package: RealmSwift
+        embed: true
     info:
       path: Bookie/Info.plist
       properties:
@@ -81,6 +86,9 @@ targets:
       - script: "mint run swiftlint"
         name: SwiftLint
   BookieAppTests:
+    settings:
+      base:
+        SWIFT_VERSION: 6
     type: bundle.unit-test
     platform: iOS
     sources: [BookieTests]
