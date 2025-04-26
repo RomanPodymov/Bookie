@@ -9,7 +9,7 @@
 import Foundation
 import RealmSwift
 
-class BookRealm: Object, Identifiable {
+final class BookRealm: Object, Identifiable {
     @Persisted(primaryKey: true) var id: String
     @Persisted var title: String
 }

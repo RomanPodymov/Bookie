@@ -7,6 +7,7 @@
 //
 
 import Fashion
+import SwiftData
 @preconcurrency import Swinject
 import Then
 import UIKit
@@ -24,7 +25,18 @@ let dependenciesContainer = {
         GoogleRemoteDataSource()
     }.inObjectScope(objectScope)
     result.register(LocalDataSource.self) { _ in
-        RealmDataSource()
+        if #available(iOS 17, *) {
+            let configuration = ModelConfiguration(for: BookSwiftData.self)
+            let schema = Schema([BookSwiftData.self])
+
+            // swiftlint:disable force_try
+            let container = try! ModelContainer(for: schema, configurations: [configuration])
+            // swiftlint:enable force_try
+
+            return SwiftDataSource(modelContainer: container)
+        } else {
+            return RealmDataSource()
+        }
     }
     return result
 }()

@@ -71,7 +71,12 @@ final class BooksViewModel {
             return
         }
         do {
-            let books = try await localSource.search(text: searchText.value)
+            let books: BookResponse
+            if let booksRemote = try? await source.search(text: searchText.value) {
+                books = booksRemote
+            } else {
+                books = try await localSource.search(text: searchText.value)
+            }
             try await localSource.save(books: books.items)
 
             data = books
