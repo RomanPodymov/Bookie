@@ -15,7 +15,7 @@ let dependenciesContainer = {
     let result = Container()
     let objectScope: ObjectScope = .container
     result.register(AnyCoordinator.self) { _ in
-        CoordinatorSwiftUI()
+        Coordinator()
     }.inObjectScope(objectScope)
     result.register(Stylesheet.self) { _ in
         MainStylesheet()
@@ -23,6 +23,9 @@ let dependenciesContainer = {
     result.register(RemoteDataSource.self) { _ in
         GoogleRemoteDataSource()
     }.inObjectScope(objectScope)
+    result.register(LocalDataSource.self) { _ in
+        RealmDataSource()
+    }
     return result
 }()
 

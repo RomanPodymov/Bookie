@@ -9,11 +9,16 @@
 import Foundation
 import RealmSwift
 
-class BookRealm: Object {
+class BookRealm: Object, Identifiable {
+    @Persisted(primaryKey: true) var id: String
     @Persisted var title: String
 }
 
-struct RealmDataSource: RemoteDataSource {
+struct RealmDataSource: LocalDataSource {
+    init() {
+        Realm.Configuration.defaultConfiguration.deleteRealmIfMigrationNeeded = true
+    }
+
     func search(text _: String) async throws (BooksViewModelError) -> BookResponse {
         do {
             return try await Task { @MainActor in
@@ -21,7 +26,7 @@ struct RealmDataSource: RemoteDataSource {
                 let books = realm.objects(BookRealm.self).map {
                     Book(
                         kind: "",
-                        id: "",
+                        id: $0.id,
                         etag: "",
                         volumeInfo: .init(
                             title: $0.title,
@@ -36,7 +41,7 @@ struct RealmDataSource: RemoteDataSource {
                             averageRating: nil,
                             ratingsCount: nil,
                             imageLinks: nil,
-                            language: nil
+                            language: "cs"
                         ),
                         saleInfo: nil,
                         accessInfo: nil,
@@ -55,9 +60,13 @@ struct RealmDataSource: RemoteDataSource {
         do {
             try await Task { @MainActor in
                 let realm = try await Realm()
+                try realm.write {
+                    realm.deleteAll()
+                }
                 for book in books {
                     try realm.write {
                         let obj = BookRealm()
+                        obj.id = book.id
                         obj.title = book.volumeInfo.title
                         realm.add(obj)
                     }

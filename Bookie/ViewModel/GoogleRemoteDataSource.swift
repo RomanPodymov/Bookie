@@ -11,11 +11,10 @@ import Moya
 
 protocol RemoteDataSource {
     func search(text: String) async throws (BooksViewModelError) -> BookResponse
-    func save(books: [Book]) async throws (BooksViewModelError)
 }
 
-extension RemoteDataSource {
-    func save(books _: [Book]) async throws (BooksViewModelError) {}
+protocol LocalDataSource: RemoteDataSource {
+    func save(books: [Book]) async throws (BooksViewModelError)
 }
 
 struct GoogleRemoteDataSource: RemoteDataSource {

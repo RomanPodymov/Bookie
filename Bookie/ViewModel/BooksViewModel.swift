@@ -65,12 +65,14 @@ final class BooksViewModel {
     }
 
     func reloadData() async {
-        guard let source = dependenciesContainer.resolve(RemoteDataSource.self) else {
+        guard let source = dependenciesContainer.resolve(RemoteDataSource.self),
+              let localSource = dependenciesContainer.resolve(LocalDataSource.self)
+        else {
             return
         }
         do {
-            let books = try await source.search(text: searchText.value)
-            try await source.save(books: books.items)
+            let books = try await localSource.search(text: searchText.value)
+            try await localSource.save(books: books.items)
 
             data = books
             oldSet = newSet
