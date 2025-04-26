@@ -16,6 +16,8 @@ extension Book: @retroactive Equatable {
     }
 }
 
+extension DataSetType: Sendable { }
+
 private final class TestScreen: AnyBooksScreen {
     @MainActor
     var testCheck: (@Sendable (DataSetType) -> Void)!
