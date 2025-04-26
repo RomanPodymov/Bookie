@@ -16,8 +16,6 @@ extension Book: @retroactive Equatable {
     }
 }
 
-extension DataSetType: Sendable { }
-
 private final class TestScreen: AnyBooksScreen {
     @MainActor
     var testCheck: (@Sendable (DataSetType) -> Void)!
@@ -87,7 +85,7 @@ class BookieTests: XCTestCase {
     @MainActor
     func testBooksViewModel() async {
         screen = TestScreen(searchText: "", previousBook: nil)
-        screen.testCheck = { newSet in
+        screen.testCheck = { @Sendable newSet in
             // Then
             XCTAssertEqual(newSet.first?.elements, Self.expected)
         }
