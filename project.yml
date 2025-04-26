@@ -71,6 +71,7 @@ targets:
       - package: SwiftAlertView
       - package: OrderedCollections
       - package: RealmSwift
+        embed: true
     info:
       path: Bookie/Info.plist
       properties:

@@ -7,10 +7,64 @@
 //
 
 import Foundation
-import Realm
+import RealmSwift
+
+class BookRealm: Object {
+    @Persisted var title: String
+}
 
 struct RealmDataSource: RemoteDataSource {
     func search(text _: String) async throws (BooksViewModelError) -> BookResponse {
-        fatalError()
+        do {
+            return try await Task { @MainActor in
+                let realm = try await Realm()
+                let books = realm.objects(BookRealm.self).map {
+                    Book(
+                        kind: "",
+                        id: "",
+                        etag: "",
+                        volumeInfo: .init(
+                            title: $0.title,
+                            authors: nil,
+                            publisher: nil,
+                            publishedDate: nil,
+                            description: nil,
+                            industryIdentifiers: nil,
+                            pageCount: nil,
+                            printType: nil,
+                            categories: nil,
+                            averageRating: nil,
+                            ratingsCount: nil,
+                            imageLinks: nil,
+                            language: nil
+                        ),
+                        saleInfo: nil,
+                        accessInfo: nil,
+                        searchInfo: nil
+                    )
+                }
+                return BookResponse(kind: "", totalItems: books.count, items: Array(books))
+
+            }.value
+        } catch {
+            throw BooksViewModelError.noData
+        }
+    }
+
+    func save(books: [Book]) async throws (BooksViewModelError) {
+        do {
+            try await Task { @MainActor in
+                let realm = try await Realm()
+                for book in books {
+                    try realm.write {
+                        let obj = BookRealm()
+                        obj.title = book.volumeInfo.title
+                        realm.add(obj)
+                    }
+                }
+            }.value
+        } catch {
+            throw BooksViewModelError.noData
+        }
     }
 }

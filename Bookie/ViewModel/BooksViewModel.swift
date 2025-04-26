@@ -70,6 +70,7 @@ final class BooksViewModel {
         }
         do {
             let books = try await source.search(text: searchText.value)
+            try await source.save(books: books.items)
 
             data = books
             oldSet = newSet
