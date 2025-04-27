@@ -86,7 +86,7 @@ final class BooksScreenSwiftUI: UIHostingController<BooksScreenRootView>, AnyBoo
                 searchText: Self.searchTextBinding(viewModel: viewModel)
             )
         )
-        viewModel.screen = self
+        // viewModel.screen = self
         viewModel.ready()
     }
 
