@@ -77,11 +77,8 @@ final class BooksScreen: UIViewController {
             }
         }
 
-        Task { [weak loadingView, weak viewModel] in
-            loadingView?.show()
-
-            await viewModel?.reloadData()
-        }
+        loadingView.show()
+        viewModel.ready()
     }
 }
 
@@ -162,9 +159,6 @@ extension BooksScreen: AnyBooksScreen {
     }
 
     func onSearchTextChanged(_ searchText: String) async {
-        if searchBar == nil {
-            return
-        }
         await MainActor.run { [weak searchBar] in
             searchBar?.text = searchText
         }

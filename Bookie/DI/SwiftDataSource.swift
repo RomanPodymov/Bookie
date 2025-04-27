@@ -10,8 +10,8 @@ import SwiftData
 
 @available(iOS 17, *)
 @Model
-final class BookSwiftData {
-    var id: String
+final class BookSwiftData: Identifiable {
+    @Attribute(.unique) var id: String
     var title: String
 
     init(id: String, title: String) {
