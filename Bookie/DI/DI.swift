@@ -31,7 +31,7 @@ extension Container: @retroactive Then {}
 let dependenciesContainer = Container().then { result in
     let objectScope: ObjectScope = .container
     result.register(AnyCoordinator.self) { _ in
-        Coordinator()
+        CoordinatorSwiftUI()
     }.inObjectScope(objectScope)
     result.register(Stylesheet.self) { _ in
         MainStylesheet()
@@ -40,16 +40,14 @@ let dependenciesContainer = Container().then { result in
         GoogleRemoteDataSource()
     }.inObjectScope(objectScope)
     result.register(LocalDataSource.self) { _ in
-        /* if #available(iOS 17, *), let container = {
-             let configuration = ModelConfiguration(for: BookSwiftData.self)
-             let schema = Schema([BookSwiftData.self])
-             return try? ModelContainer(for: schema, configurations: [configuration])
-         }() {
-             SwiftDataSource(modelContainer: container)
-         } else {
-             RealmDataSource()
-         } */
-
-        RealmDataSource()
+        if #available(iOS 17, *), let container = {
+            let configuration = ModelConfiguration(for: BookSwiftData.self)
+            let schema = Schema([BookSwiftData.self])
+            return try? ModelContainer(for: schema, configurations: [configuration])
+        }() {
+            SwiftDataSource(modelContainer: container)
+        } else {
+            RealmDataSource()
+        }
     }
 }

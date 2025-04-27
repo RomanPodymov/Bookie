@@ -79,18 +79,25 @@ final class BooksScreenSwiftUI: UIHostingController<BooksScreenRootView>, AnyBoo
         viewModel = .init(screen: nil, searchText: searchText, previousBook: previousBook)
         super.init(
             rootView: BooksScreenRootView(
-                selectedBook: Self.selectedBook(searchText: searchText, previousBook: previousBook, viewModel: viewModel),
+                selectedBook: Self.selectedBook(
+                    previousBook: previousBook,
+                    viewModel: viewModel
+                ),
                 searchText: Self.searchTextBinding(viewModel: viewModel)
             )
         )
         viewModel.screen = self
-
-        Task { [weak viewModel] in
-            await viewModel?.reloadData()
-        }
+        viewModel.ready()
     }
 
-    private static func selectedBook(searchText _: String, previousBook: Book?, viewModel: BooksViewModel) -> Binding<Book?> {
+    @MainActor @preconcurrency dynamic required init?(coder _: NSCoder) {
+        nil
+    }
+
+    private static func selectedBook(
+        previousBook: Book?,
+        viewModel: BooksViewModel
+    ) -> Binding<Book?> {
         .init(get: {
             previousBook
         }, set: { [weak viewModel] book in
@@ -123,9 +130,5 @@ final class BooksScreenSwiftUI: UIHostingController<BooksScreenRootView>, AnyBoo
         await Task { [weak viewModel] in
             await viewModel?.reloadData()
         }.value
-    }
-
-    @MainActor @preconcurrency dynamic required init?(coder _: NSCoder) {
-        nil
     }
 }

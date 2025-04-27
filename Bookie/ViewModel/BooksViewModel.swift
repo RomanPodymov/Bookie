@@ -57,11 +57,6 @@ final class BooksViewModel {
         self.searchText = .init(searchText)
         self.previousBook = previousBook
         self.data = data
-        self.searchText.removeDuplicates().sink { [weak self] text in
-            _Concurrency.Task { [weak screen = self?.screen] in
-                await screen?.onSearchTextChanged(text)
-            }
-        }.store(in: &cancellables)
     }
 
     func reloadData() async {
@@ -86,6 +81,14 @@ final class BooksViewModel {
         } catch {
             await screen?.onNewDataError(error)
         }
+    }
+
+    func ready() {
+        searchText.removeDuplicates().sink { [weak screen = self.screen] text in
+            _Concurrency.Task { [weak screen] in
+                await screen?.onSearchTextChanged(text)
+            }
+        }.store(in: &cancellables)
     }
 
     private func createSet(from books: BookResponse) -> DataSetType {

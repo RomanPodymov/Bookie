@@ -77,11 +77,8 @@ final class BooksScreen: UIViewController {
             }
         }
 
-        Task { [weak loadingView, weak viewModel] in
-            loadingView?.show()
-
-            await viewModel?.reloadData()
-        }
+        loadingView.show()
+        viewModel.ready()
     }
 }
 

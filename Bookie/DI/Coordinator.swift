@@ -10,7 +10,7 @@ import UIKit
 
 class Coordinator: AnyCoordinator {
     private weak var window: UIWindow?
-    private var searchText = "Karel"
+    private var searchText = "C"
 
     func set(window: UIWindow) {
         self.window = window
