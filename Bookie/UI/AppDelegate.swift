@@ -7,36 +7,8 @@
 //
 
 import Fashion
-import SwiftData
-@preconcurrency import Swinject
 import Then
 import UIKit
-
-let dependenciesContainer = {
-    let result = Container()
-    let objectScope: ObjectScope = .container
-    result.register(AnyCoordinator.self) { _ in
-        CoordinatorSwiftUI()
-    }.inObjectScope(objectScope)
-    result.register(Stylesheet.self) { _ in
-        MainStylesheet()
-    }.inObjectScope(objectScope)
-    result.register(RemoteDataSource.self) { _ in
-        GoogleRemoteDataSource()
-    }.inObjectScope(objectScope)
-    result.register(LocalDataSource.self) { _ in
-        if #available(iOS 17, *), let container = {
-            let configuration = ModelConfiguration(for: BookSwiftData.self)
-            let schema = Schema([BookSwiftData.self])
-            return try? ModelContainer(for: schema, configurations: [configuration])
-        }() {
-            return SwiftDataSource(modelContainer: container)
-        } else {
-            return RealmDataSource()
-        }
-    }
-    return result
-}()
 
 @main
 final class AppDelegate: UIResponder, UIApplicationDelegate {

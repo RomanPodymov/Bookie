@@ -9,14 +9,6 @@
 import Foundation
 import Moya
 
-protocol RemoteDataSource {
-    func search(text: String) async throws (BooksViewModelError) -> BookResponse
-}
-
-protocol LocalDataSource: RemoteDataSource {
-    func save(books: [Book]) async throws (BooksViewModelError)
-}
-
 struct GoogleRemoteDataSource: RemoteDataSource {
     func search(text: String) async throws (BooksViewModelError) -> BookResponse {
         let provider = MoyaProvider<BooksService>(plugins: [

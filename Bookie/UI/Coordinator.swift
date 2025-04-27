@@ -8,12 +8,6 @@
 
 import UIKit
 
-protocol AnyCoordinator {
-    func set(window: UIWindow)
-    func openHomeScreen(previousBook: Book?) async
-    func openDetailScreen(_ data: Book, searchText: String) async
-}
-
 class Coordinator: AnyCoordinator {
     private weak var window: UIWindow?
     private var searchText = "Karel"
@@ -38,7 +32,7 @@ class Coordinator: AnyCoordinator {
     }
 
     @MainActor
-    fileprivate class func createRootScreen(
+    class func createRootScreen(
         searchText: String,
         previousBook: Book?
     ) -> (AnyBooksScreen & UIViewController) {
@@ -46,7 +40,7 @@ class Coordinator: AnyCoordinator {
     }
 
     @MainActor
-    fileprivate class func createDetailScreen(
+    class func createDetailScreen(
         _ data: Book
     ) -> (AnyBookScreen & UIViewController) {
         BookScreen(data)
@@ -59,22 +53,5 @@ class Coordinator: AnyCoordinator {
         let options: UIView.AnimationOptions = .transitionCrossDissolve
         let duration: TimeInterval = 0.3
         await UIView.transition(with: window, duration: duration, options: options, animations: {})
-    }
-}
-
-class CoordinatorSwiftUI: Coordinator {
-    @MainActor
-    override fileprivate class func createRootScreen(
-        searchText: String,
-        previousBook: Book?
-    ) -> (AnyBooksScreen & UIViewController) {
-        BooksScreenSwiftUI(searchText: searchText, previousBook: previousBook)
-    }
-
-    @MainActor
-    override fileprivate class func createDetailScreen(
-        _ data: Book
-    ) -> (AnyBookScreen & UIViewController) {
-        BookScreenSwiftUI(data)
     }
 }
