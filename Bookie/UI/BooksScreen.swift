@@ -159,9 +159,6 @@ extension BooksScreen: AnyBooksScreen {
     }
 
     func onSearchTextChanged(_ searchText: String) async {
-        if searchBar == nil {
-            return
-        }
         await MainActor.run { [weak searchBar] in
             searchBar?.text = searchText
         }
