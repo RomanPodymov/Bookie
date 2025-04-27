@@ -57,11 +57,6 @@ final class BooksViewModel {
         self.searchText = .init(searchText)
         self.previousBook = previousBook
         self.data = data
-        self.searchText.removeDuplicates().sink { [weak self] text in
-            _Concurrency.Task { [weak screen = self?.screen] in
-                await screen?.onSearchTextChanged(text)
-            }
-        }.store(in: &cancellables)
     }
 
     func reloadData() async {
@@ -74,33 +69,43 @@ final class BooksViewModel {
             let books: BookResponse
             if let booksRemote = try? await source.search(text: searchText.value) {
                 books = booksRemote
+                try await localSource.save(books: books.items)
             } else {
                 books = try await localSource.search(text: searchText.value)
             }
-            try await localSource.save(books: books.items)
 
             data = books
             oldSet = newSet
 
-            let newSetFiltered = books.items.filter { book in
-                guard let language = book.volumeInfo.language.flatMap({ BookLanguage(rawValue: $0) }) else {
-                    return false
-                }
-                return allowedLanguages.contains(language)
-            }
-            let newSet = [DataSetKeyType: [Book]](grouping: newSetFiltered, by: {
-                $0.volumeInfo.categories.map { .init($0) } ?? .init()
-            }).mapValues {
-                $0.sorted(by: \.volumeInfo.title)
-            }.map {
-                DataSetItemType(model: $0.key, elements: $0.value)
-            }.sorted { lhs, rhs in
-                lhs.model.joined() < rhs.model.joined()
-            }
-
-            await screen?.onNewDataReceived(oldSet: oldSet, newSet: newSet)
+            await screen?.onNewDataReceived(oldSet: oldSet, newSet: createSet(from: books))
         } catch {
             await screen?.onNewDataError(error)
+        }
+    }
+
+    func ready() {
+        searchText.removeDuplicates().sink { [weak screen = self.screen] text in
+            _Concurrency.Task { [weak screen] in
+                await screen?.onSearchTextChanged(text)
+            }
+        }.store(in: &cancellables)
+    }
+
+    private func createSet(from books: BookResponse) -> DataSetType {
+        let newSetFiltered = books.items.filter { book in
+            guard let language = book.volumeInfo.language.flatMap({ BookLanguage(rawValue: $0) }) else {
+                return false
+            }
+            return allowedLanguages.contains(language)
+        }
+        return [DataSetKeyType: [Book]](grouping: newSetFiltered, by: {
+            $0.volumeInfo.categories.map { .init($0) } ?? .init()
+        }).mapValues {
+            $0.sorted(by: \.volumeInfo.title)
+        }.map {
+            DataSetItemType(model: $0.key, elements: $0.value)
+        }.sorted { lhs, rhs in
+            lhs.model.joined() < rhs.model.joined()
         }
     }
 
