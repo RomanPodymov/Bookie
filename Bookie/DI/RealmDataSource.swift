@@ -9,9 +9,19 @@
 import Foundation
 import RealmSwift
 
+final class BookImageRealm: Object {
+    @Persisted var smallThumbnail: String?
+    @Persisted var thumbnail: String?
+    @Persisted var small: String?
+    @Persisted var medium: String?
+    @Persisted var large: String?
+    @Persisted var extraLarge: String?
+}
+
 final class BookRealm: Object, Identifiable {
     @Persisted(primaryKey: true) var id: String
     @Persisted var title: String
+    @Persisted var image: BookImageRealm?
 }
 
 struct RealmDataSource: LocalDataSource {
@@ -40,7 +50,14 @@ struct RealmDataSource: LocalDataSource {
                             categories: nil,
                             averageRating: nil,
                             ratingsCount: nil,
-                            imageLinks: nil,
+                            imageLinks: .init(
+                                smallThumbnail: $0.image?.smallThumbnail,
+                                thumbnail: $0.image?.thumbnail,
+                                small: $0.image?.small,
+                                medium: $0.image?.medium,
+                                large: $0.image?.large,
+                                extraLarge: $0.image?.extraLarge
+                            ),
                             language: "cs"
                         ),
                         saleInfo: nil,
@@ -64,10 +81,19 @@ struct RealmDataSource: LocalDataSource {
                 let realm = try await Realm()
                 for book in books {
                     try realm.write {
-                        let obj = BookRealm()
-                        obj.id = book.id
-                        obj.title = book.volumeInfo.title
-                        realm.add(obj)
+                        let obj = BookRealm().then {
+                            $0.id = book.id
+                            $0.title = book.volumeInfo.title
+                            $0.image = BookImageRealm().then {
+                                $0.smallThumbnail = book.volumeInfo.imageLinks?.smallThumbnail
+                                $0.thumbnail = book.volumeInfo.imageLinks?.thumbnail
+                                $0.small = book.volumeInfo.imageLinks?.small
+                                $0.medium = book.volumeInfo.imageLinks?.medium
+                                $0.large = book.volumeInfo.imageLinks?.large
+                                $0.extraLarge = book.volumeInfo.imageLinks?.extraLarge
+                            }
+                        }
+                        realm.add(obj, update: .modified)
                     }
                 }
             }.value

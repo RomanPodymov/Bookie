@@ -9,6 +9,7 @@
 import Fashion
 import SwiftData
 @preconcurrency import Swinject
+import Then
 import UIKit
 
 protocol AnyCoordinator {
@@ -25,28 +26,30 @@ protocol LocalDataSource: RemoteDataSource {
     func save(books: [Book]) async throws (BooksViewModelError)
 }
 
-let dependenciesContainer = {
-    let result = Container()
+extension Container: @retroactive Then {}
+
+let dependenciesContainer = Container().then { result in
     let objectScope: ObjectScope = .container
     result.register(AnyCoordinator.self) { _ in
-        CoordinatorSwiftUI()
+        Coordinator()
     }.inObjectScope(objectScope)
     result.register(Stylesheet.self) { _ in
         MainStylesheet()
     }.inObjectScope(objectScope)
     result.register(RemoteDataSource.self) { _ in
-        GoogleRemoteDataSource()
+        RealmDataSource()
+        // GoogleRemoteDataSource()
     }.inObjectScope(objectScope)
     result.register(LocalDataSource.self) { _ in
-        if #available(iOS 17, *), let container = {
-            let configuration = ModelConfiguration(for: BookSwiftData.self)
-            let schema = Schema([BookSwiftData.self])
-            return try? ModelContainer(for: schema, configurations: [configuration])
-        }() {
-            return SwiftDataSource(modelContainer: container)
-        } else {
-            return RealmDataSource()
-        }
+        /* if #available(iOS 17, *), let container = {
+             let configuration = ModelConfiguration(for: BookSwiftData.self)
+             let schema = Schema([BookSwiftData.self])
+             return try? ModelContainer(for: schema, configurations: [configuration])
+         }() {
+             SwiftDataSource(modelContainer: container)
+         } else {
+             RealmDataSource()
+         } */
+        RealmDataSource()
     }
-    return result
-}()
+}
