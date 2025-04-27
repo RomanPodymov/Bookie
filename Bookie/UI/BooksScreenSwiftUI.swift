@@ -79,7 +79,7 @@ final class BooksScreenSwiftUI: UIHostingController<BooksScreenRootView>, AnyBoo
         viewModel = .init(screen: nil, searchText: searchText, previousBook: previousBook)
         super.init(
             rootView: BooksScreenRootView(
-                selectedBook: Self.selectedBook(searchText: searchText, previousBook: previousBook),
+                selectedBook: Self.selectedBook(searchText: searchText, previousBook: previousBook, viewModel: viewModel),
                 searchText: Self.searchTextBinding(viewModel: viewModel)
             )
         )
@@ -90,17 +90,17 @@ final class BooksScreenSwiftUI: UIHostingController<BooksScreenRootView>, AnyBoo
         }
     }
 
-    private static func selectedBook(searchText: String, previousBook: Book?) -> Binding<Book?> {
+    private static func selectedBook(searchText _: String, previousBook: Book?, viewModel: BooksViewModel) -> Binding<Book?> {
         .init(get: {
             previousBook
-        }, set: { book in
+        }, set: { [weak viewModel] book in
             guard let book else {
                 return
             }
-            Task {
+            Task { [weak viewModel] in
                 await dependenciesContainer.resolve(
                     AnyCoordinator.self
-                )?.openDetailScreen(book, searchText: searchText)
+                )?.openDetailScreen(book, searchText: viewModel?.searchText.value ?? "")
             }
         })
     }

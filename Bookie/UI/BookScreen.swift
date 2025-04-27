@@ -37,13 +37,15 @@ final class BookScreen: UIViewController {
                 make.leading.top.trailing.bottom.equalToSuperview()
             }
         }
-        bookImage.kf.setImage(
-            with: .network(
-                URL(
-                    unsafeString: viewModel.data?.volumeInfo.imageLinks?.detailScreenImage ?? ""
+        if let image = viewModel.data?.volumeInfo.imageLinks?.detailScreenImage {
+            bookImage.kf.setImage(
+                with: .network(
+                    URL(
+                        unsafeString: image
+                    )
                 )
             )
-        )
+        }
 
         setupButtons()
 

@@ -65,10 +65,10 @@ struct RealmDataSource: LocalDataSource {
                         searchInfo: nil
                     )
                 }
-                let booksForTitle = books.filter { book in
+                let booksForTitle = Array(books.filter { book in
                     book.volumeInfo.title.contains(text)
-                }
-                return BookResponse(kind: "", totalItems: booksForTitle.count, items: Array(booksForTitle))
+                })
+                return BookResponse(kind: "", totalItems: booksForTitle.count, items: booksForTitle)
             }.value
         } catch {
             throw BooksViewModelError.noData

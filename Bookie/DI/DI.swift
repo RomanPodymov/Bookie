@@ -37,8 +37,7 @@ let dependenciesContainer = Container().then { result in
         MainStylesheet()
     }.inObjectScope(objectScope)
     result.register(RemoteDataSource.self) { _ in
-        RealmDataSource()
-        // GoogleRemoteDataSource()
+        GoogleRemoteDataSource()
     }.inObjectScope(objectScope)
     result.register(LocalDataSource.self) { _ in
         /* if #available(iOS 17, *), let container = {
@@ -50,6 +49,7 @@ let dependenciesContainer = Container().then { result in
          } else {
              RealmDataSource()
          } */
+
         RealmDataSource()
     }
 }

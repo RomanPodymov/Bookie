@@ -11,6 +11,8 @@ import Moya
 
 struct GoogleRemoteDataSource: RemoteDataSource {
     func search(text: String) async throws (BooksViewModelError) -> BookResponse {
+        throw BooksViewModelError.noData
+
         let provider = MoyaProvider<BooksService>(plugins: [
             NetworkLoggerPlugin(configuration: .init(
                 logOptions: [.requestBody, .successResponseBody, .errorResponseBody]
