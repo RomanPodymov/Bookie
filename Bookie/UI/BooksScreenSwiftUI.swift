@@ -73,7 +73,7 @@ struct BooksScreenRootView: View {
 }
 
 final class BooksScreenSwiftUI: UIHostingController<BooksScreenRootView>, AnyBooksScreen {
-    private var viewModel: BooksViewModel!
+    var viewModel: BooksViewModel!
 
     init(searchText: String, previousBook: Book?) {
         viewModel = .init(screen: nil, searchText: searchText, previousBook: previousBook)

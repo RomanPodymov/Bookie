@@ -56,7 +56,7 @@ struct BookScreenRootView: View {
 }
 
 final class BookScreenSwiftUI: UIHostingController<BookScreenRootView>, AnyBookScreen {
-    private var viewModel: BookViewModel!
+    var viewModel: BookViewModel!
 
     init(_ data: Book?) {
         viewModel = BookViewModel(screen: nil, data: data)

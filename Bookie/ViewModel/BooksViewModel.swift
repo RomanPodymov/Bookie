@@ -14,7 +14,7 @@ import JobInterviewAssignmentKit
 import Moya
 import OrderedCollections
 
-protocol AnyBooksScreen: AnyScreen, Sendable {
+protocol AnyBooksScreen: Screen, Sendable {
     @MainActor
     init(searchText: String, previousBook: Book?)
     func onNewDataReceived(oldSet: DataSetType, newSet: DataSetType) async
@@ -41,7 +41,7 @@ enum BooksViewModelError: Error {
     case requestError(Error)
 }
 
-final class BooksViewModel: AnyViewModel<BooksScreen> {
+final class BooksViewModel: BasicViewModel<BooksScreen> {
     let searchText: CurrentValueSubject<String, Never>
     var previousBook: Book?
 
@@ -56,6 +56,11 @@ final class BooksViewModel: AnyViewModel<BooksScreen> {
         super.init(screen: screen)
         self.previousBook = previousBook
         self.data = data
+    }
+
+    required init(screen: ScreenType) {
+        searchText = .init("")
+        super.init(screen: screen)
     }
 
     func reloadData() async {
