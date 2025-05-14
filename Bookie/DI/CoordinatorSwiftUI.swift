@@ -13,14 +13,14 @@ class CoordinatorSwiftUI: Coordinator {
     override class func createRootScreen(
         searchText: String,
         previousBook: Book?
-    ) -> (AnyBooksScreen & UIViewController) {
+    ) -> (any AnyBooksScreen & UIViewController) {
         BooksScreenSwiftUI(searchText: searchText, previousBook: previousBook)
     }
 
     @MainActor
     override class func createDetailScreen(
         _ data: Book
-    ) -> (AnyBookScreen & UIViewController) {
+    ) -> (any AnyBookScreen & UIViewController) {
         BookScreenSwiftUI(data)
     }
 }

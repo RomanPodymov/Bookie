@@ -47,7 +47,7 @@ struct SetupParams {
     let data: BookResponse?
 }
 
-final class BooksViewModel: BasicViewModel<BooksScreen> {
+final class BooksViewModel<BooksScreenType: AnyObject & AnyBooksScreen>: BasicViewModel<BooksScreenType> {
     let searchText: CurrentValueSubject<String, Never>
     var previousBook: Book?
 
@@ -62,7 +62,7 @@ final class BooksViewModel: BasicViewModel<BooksScreen> {
         self.previousBook = previousBook
         self.data = data
         super.init()
-        self.screen = screen
+        self.screen = screen as? BooksScreenType
     }
 
     func reloadData() async {

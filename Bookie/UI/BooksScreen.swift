@@ -21,7 +21,7 @@ final class BooksScreen: UIViewController {
     private unowned var rootView: UICollectionView!
     private unowned var loadingView: LoadingView!
 
-    var viewModel: BooksViewModel!
+    var viewModel: BooksViewModel<BooksScreen>!
 
     init(searchText: String, previousBook: Book?) {
         super.init(nibName: nil, bundle: nil)
