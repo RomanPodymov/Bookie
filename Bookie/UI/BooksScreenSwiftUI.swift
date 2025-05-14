@@ -73,7 +73,7 @@ struct BooksScreenRootView: View {
 }
 
 final class BooksScreenSwiftUI: UIHostingController<BooksScreenRootView>, AnyBooksScreen {
-    private var viewModel: BooksViewModel!
+    var viewModel: BooksViewModel<BooksScreenSwiftUI>!
 
     init(searchText: String, previousBook: Book?) {
         viewModel = .init(screen: nil, searchText: searchText, previousBook: previousBook)
@@ -96,7 +96,7 @@ final class BooksScreenSwiftUI: UIHostingController<BooksScreenRootView>, AnyBoo
 
     private static func selectedBook(
         previousBook: Book?,
-        viewModel: BooksViewModel
+        viewModel: BooksViewModel<BooksScreenSwiftUI>
     ) -> Binding<Book?> {
         .init(get: {
             previousBook
@@ -112,7 +112,7 @@ final class BooksScreenSwiftUI: UIHostingController<BooksScreenRootView>, AnyBoo
         })
     }
 
-    private static func searchTextBinding(viewModel: BooksViewModel) -> Binding<String> {
+    private static func searchTextBinding(viewModel: BooksViewModel<BooksScreenSwiftUI>) -> Binding<String> {
         .init(get: { [weak viewModel] in
             viewModel?.searchText.value ?? ""
         }, set: { [weak viewModel] in

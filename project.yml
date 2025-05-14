@@ -44,6 +44,9 @@ packages:
   OrderedCollections:
     url: https://github.com/apple/swift-collections
     version: 1.1.4
+  JobInterviewAssignmentKit:
+    url: https://github.com/RomanPodymov/JobInterviewAssignmentKit
+    version: 0.0.1
   RealmSwift:
     url: https://github.com/realm/realm-swift.git
     version: 20.0.2
@@ -70,6 +73,7 @@ targets:
       - package: UICollectionViewLeftAlignedLayout
       - package: SwiftAlertView
       - package: OrderedCollections
+      - package: JobInterviewAssignmentKit
       - package: RealmSwift
         embed: true
     info:
@@ -78,17 +82,18 @@ targets:
         NSAppTransportSecurity:
           NSAllowsArbitraryLoads: YES
     preBuildScripts:
-      - script: "mint run swiftgen"
+      - script: "/opt/homebrew/bin/mint run swiftgen"
         name: SwiftGen
     postCompileScripts:
-      - script: "mint run swiftformat . --swiftversion 5.5"
+      - script: "/opt/homebrew/bin/mint run swiftformat . --swiftversion 5.5"
         name: SwiftFormat
-      - script: "mint run swiftlint"
+      - script: "/opt/homebrew/bin/mint run swiftlint"
         name: SwiftLint
   BookieAppTests:
     settings:
       base:
         SWIFT_VERSION: 6
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: ${SWIFT_ACTIVE_COMPILATION_CONDITIONS}
     type: bundle.unit-test
     platform: iOS
     sources: [BookieTests]

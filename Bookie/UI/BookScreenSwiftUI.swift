@@ -56,7 +56,7 @@ struct BookScreenRootView: View {
 }
 
 final class BookScreenSwiftUI: UIHostingController<BookScreenRootView>, AnyBookScreen {
-    private var viewModel: BookViewModel!
+    var viewModel: BookViewModel<BookScreenSwiftUI>!
 
     init(_ data: Book?) {
         viewModel = BookViewModel(screen: nil, data: data)
@@ -73,7 +73,7 @@ final class BookScreenSwiftUI: UIHostingController<BookScreenRootView>, AnyBookS
         nil
     }
 
-    private static func backPressedBinding(viewModel: BookViewModel) -> Binding<Bool> {
+    private static func backPressedBinding(viewModel: BookViewModel<BookScreenSwiftUI>) -> Binding<Bool> {
         .init(get: {
             false
         }, set: { _ in

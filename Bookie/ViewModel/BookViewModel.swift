@@ -6,21 +6,21 @@
 //  Copyright © 2025 Bookie. All rights reserved.
 //
 
+import JobInterviewAssignmentKit
 import UIKit
 
-protocol AnyBookScreen: AnyObject {
+protocol AnyBookScreen: Screen {
     @MainActor
     init(_ data: Book?)
 }
 
-class BookViewModel {
-    unowned var screen: AnyBookScreen!
-
+class BookViewModel<BookScreenType: AnyObject & AnyBookScreen>: BasicViewModel<BookScreenType> {
     var data: Book?
 
-    init(screen: AnyBookScreen!, data: Book? = nil) {
-        self.screen = screen
+    init(screen: BookScreenType!, data: Book? = nil) {
         self.data = data
+        super.init()
+        self.screen = screen
     }
 
     @MainActor

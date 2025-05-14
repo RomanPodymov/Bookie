@@ -10,10 +10,11 @@ import Combine
 import CombineMoya
 import DifferenceKit
 import Foundation
+import JobInterviewAssignmentKit
 import Moya
 import OrderedCollections
 
-protocol AnyBooksScreen: AnyObject, Sendable {
+protocol AnyBooksScreen: Screen, Sendable {
     @MainActor
     init(searchText: String, previousBook: Book?)
     func onNewDataReceived(oldSet: DataSetType, newSet: DataSetType) async
@@ -40,9 +41,7 @@ enum BooksViewModelError: Error {
     case requestError(Error)
 }
 
-final class BooksViewModel {
-    unowned var screen: AnyBooksScreen!
-
+final class BooksViewModel<BooksScreenType: AnyObject & AnyBooksScreen>: BasicViewModel<BooksScreenType> {
     let searchText: CurrentValueSubject<String, Never>
     var previousBook: Book?
 
@@ -52,11 +51,12 @@ final class BooksViewModel {
     private var newSet: DataSetType = .init()
     private var cancellables = Set<AnyCancellable>()
 
-    init(screen: AnyBooksScreen!, searchText: String, previousBook: Book?, data: BookResponse? = nil) {
-        self.screen = screen
+    init(screen: BooksScreenType!, searchText: String, previousBook: Book?, data: BookResponse? = nil) {
         self.searchText = .init(searchText)
         self.previousBook = previousBook
         self.data = data
+        super.init()
+        self.screen = screen
     }
 
     func reloadData() async {
