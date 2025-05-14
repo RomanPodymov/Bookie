@@ -17,7 +17,7 @@ final class BookScreen: UIViewController {
     private unowned var bookImage: UIImageView!
     private unowned var metadataRootView: UIView!
 
-    var viewModel: BookViewModel!
+    var viewModel: BookViewModel<BookScreen>!
 
     init(_ data: Book?) {
         super.init(nibName: nil, bundle: nil)

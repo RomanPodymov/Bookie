@@ -57,12 +57,12 @@ final class BooksViewModel<BooksScreenType: AnyObject & AnyBooksScreen>: BasicVi
     private var newSet: DataSetType = .init()
     private var cancellables = Set<AnyCancellable>()
 
-    init(screen: BooksScreen!, searchText: String, previousBook: Book?, data: BookResponse? = nil) {
+    init(screen: BooksScreenType!, searchText: String, previousBook: Book?, data: BookResponse? = nil) {
         self.searchText = .init(searchText)
         self.previousBook = previousBook
         self.data = data
         super.init()
-        self.screen = screen as? BooksScreenType
+        self.screen = screen
     }
 
     func reloadData() async {

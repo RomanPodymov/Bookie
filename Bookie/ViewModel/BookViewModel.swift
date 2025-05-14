@@ -14,10 +14,10 @@ protocol AnyBookScreen: Screen {
     init(_ data: Book?)
 }
 
-class BookViewModel: BasicViewModel<BookScreen> {
+class BookViewModel<BookScreenType: AnyObject & AnyBookScreen>: BasicViewModel<BookScreenType> {
     var data: Book?
 
-    init(screen: BookScreen!, data: Book? = nil) {
+    init(screen: BookScreenType!, data: Book? = nil) {
         self.data = data
         super.init()
         self.screen = screen

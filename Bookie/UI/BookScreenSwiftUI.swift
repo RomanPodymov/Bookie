@@ -56,7 +56,7 @@ struct BookScreenRootView: View {
 }
 
 final class BookScreenSwiftUI: UIHostingController<BookScreenRootView>, AnyBookScreen {
-    var viewModel: BookViewModel!
+    var viewModel: BookViewModel<BookScreenSwiftUI>!
 
     init(_ data: Book?) {
         viewModel = BookViewModel(screen: nil, data: data)
@@ -66,14 +66,14 @@ final class BookScreenSwiftUI: UIHostingController<BookScreenRootView>, AnyBookS
                 data: data
             )
         )
-        // viewModel.screen = self
+        viewModel.screen = self
     }
 
     @MainActor @preconcurrency dynamic required init?(coder _: NSCoder) {
         nil
     }
 
-    private static func backPressedBinding(viewModel: BookViewModel) -> Binding<Bool> {
+    private static func backPressedBinding(viewModel: BookViewModel<BookScreenSwiftUI>) -> Binding<Bool> {
         .init(get: {
             false
         }, set: { _ in
