@@ -35,14 +35,14 @@ class Coordinator: AnyCoordinator {
     class func createRootScreen(
         searchText: String,
         previousBook: Book?
-    ) -> (AnyBooksScreen & UIViewController) {
+    ) -> (any AnyBooksScreen & UIViewController) {
         BooksScreen(searchText: searchText, previousBook: previousBook)
     }
 
     @MainActor
     class func createDetailScreen(
         _ data: Book
-    ) -> (AnyBookScreen & UIViewController) {
+    ) -> (any AnyBookScreen & UIViewController) {
         BookScreen(data)
     }
 
