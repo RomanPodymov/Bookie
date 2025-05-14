@@ -18,12 +18,9 @@ class BookViewModel: BasicViewModel<BookScreen> {
     var data: Book?
 
     init(screen: BookScreen!, data: Book? = nil) {
-        super.init(screen: screen)
         self.data = data
-    }
-
-    required init(screen: ScreenType) {
-        super.init(screen: screen)
+        super.init()
+        self.screen = screen
     }
 
     @MainActor

@@ -41,6 +41,12 @@ enum BooksViewModelError: Error {
     case requestError(Error)
 }
 
+struct SetupParams {
+    let searchText: String
+    let previousBook: Book?
+    let data: BookResponse?
+}
+
 final class BooksViewModel: BasicViewModel<BooksScreen> {
     let searchText: CurrentValueSubject<String, Never>
     var previousBook: Book?
@@ -53,14 +59,10 @@ final class BooksViewModel: BasicViewModel<BooksScreen> {
 
     init(screen: BooksScreen!, searchText: String, previousBook: Book?, data: BookResponse? = nil) {
         self.searchText = .init(searchText)
-        super.init(screen: screen)
         self.previousBook = previousBook
         self.data = data
-    }
-
-    required init(screen: ScreenType) {
-        searchText = .init("")
-        super.init(screen: screen)
+        super.init()
+        self.screen = screen
     }
 
     func reloadData() async {
@@ -81,9 +83,9 @@ final class BooksViewModel: BasicViewModel<BooksScreen> {
             data = books
             oldSet = newSet
 
-            await (screen as? AnyBooksScreen)?.onNewDataReceived(oldSet: oldSet, newSet: createSet(from: books))
+            await screen.onNewDataReceived(oldSet: oldSet, newSet: createSet(from: books))
         } catch {
-            await (screen as? AnyBooksScreen)?.onNewDataError(error)
+            await screen.onNewDataError(error)
         }
     }
 
