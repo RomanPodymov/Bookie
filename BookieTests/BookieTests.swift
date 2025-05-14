@@ -22,7 +22,9 @@ private final class TestScreen: AnyBooksScreen {
     @MainActor
     var testCheck: (@Sendable (DataSetType) -> Void)!
 
-    required init(searchText _: String, previousBook _: Book?) {}
+    required init(searchText: String, previousBook: Book?) {
+        viewModel = BooksViewModel(screen: self, searchText: searchText, previousBook: previousBook)
+    }
 
     func onNewDataReceived(oldSet _: DataSetType, newSet: DataSetType) async {
         await testCheck(newSet)
@@ -93,8 +95,7 @@ class BookieTests: XCTestCase {
         }
 
         // When
-        let viewModel = BooksViewModel(screen: screen, searchText: "", previousBook: nil)
-        await viewModel.reloadData()
+        await screen.viewModel.reloadData()
     }
 }
 
