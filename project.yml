@@ -45,7 +45,8 @@ packages:
     url: https://github.com/apple/swift-collections
     version: 1.1.4
   JobInterviewAssignmentKit:
-    path: ../JobInterviewAssignmentKit
+    url: https://github.com/RomanPodymov/JobInterviewAssignmentKit
+    version: 0.0.1
   RealmSwift:
     url: https://github.com/realm/realm-swift.git
     version: 20.0.2
