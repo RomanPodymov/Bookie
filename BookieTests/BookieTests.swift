@@ -17,6 +17,8 @@ extension Book: @retroactive Equatable {
 }
 
 private final class TestScreen: AnyBooksScreen {
+    var viewModel: BooksViewModel<TestScreen>!
+
     @MainActor
     var testCheck: (@Sendable (DataSetType) -> Void)!
 
