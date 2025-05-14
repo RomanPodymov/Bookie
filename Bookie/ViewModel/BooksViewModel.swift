@@ -41,12 +41,6 @@ enum BooksViewModelError: Error {
     case requestError(Error)
 }
 
-struct SetupParams {
-    let searchText: String
-    let previousBook: Book?
-    let data: BookResponse?
-}
-
 final class BooksViewModel<BooksScreenType: AnyObject & AnyBooksScreen>: BasicViewModel<BooksScreenType> {
     let searchText: CurrentValueSubject<String, Never>
     var previousBook: Book?
@@ -83,9 +77,9 @@ final class BooksViewModel<BooksScreenType: AnyObject & AnyBooksScreen>: BasicVi
             data = books
             oldSet = newSet
 
-            await screen.onNewDataReceived(oldSet: oldSet, newSet: createSet(from: books))
+            await screen?.onNewDataReceived(oldSet: oldSet, newSet: createSet(from: books))
         } catch {
-            await screen.onNewDataError(error)
+            await screen?.onNewDataError(error)
         }
     }
 
