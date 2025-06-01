@@ -43,7 +43,7 @@ packages:
     version: 2.2.1
   OrderedCollections:
     url: https://github.com/apple/swift-collections
-    version: 1.1.4
+    version: 1.2.0
   JobInterviewAssignmentKit:
     url: https://github.com/RomanPodymov/JobInterviewAssignmentKit
     version: 0.0.1
