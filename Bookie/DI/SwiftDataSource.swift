@@ -25,7 +25,7 @@ final class BookSwiftData: Identifiable {
 actor SwiftDataSource: LocalDataSource {
     private var context: ModelContext { modelExecutor.modelContext }
 
-    func search(text: String) async throws (BooksViewModelError) -> BookResponse {
+    func search(text: String) async throws(BooksViewModelError) -> BookResponse {
         do {
             let books = try context.fetch(FetchDescriptor<BookSwiftData>()).map {
                 Book(
@@ -61,10 +61,10 @@ actor SwiftDataSource: LocalDataSource {
         }
     }
 
-    func save(books: [Book]) async throws (BooksViewModelError) {
+    func save(books: [Book]) async throws(BooksViewModelError) {
         do {
-            books.forEach {
-                context.insert(BookSwiftData(id: $0.id, title: $0.volumeInfo.title))
+            for book in books {
+                context.insert(BookSwiftData(id: book.id, title: book.volumeInfo.title))
             }
             try context.save()
         } catch {

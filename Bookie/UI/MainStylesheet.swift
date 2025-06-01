@@ -9,7 +9,7 @@
 import Fashion
 import UIKit
 
-struct LayoutParams {
+enum LayoutParams {
     enum BooksScren {
         static let defaultInset = CGFloat(20)
         static let smallerInset = CGFloat(10)

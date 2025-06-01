@@ -19,11 +19,11 @@ protocol AnyCoordinator {
 }
 
 protocol RemoteDataSource {
-    func search(text: String) async throws (BooksViewModelError) -> BookResponse
+    func search(text: String) async throws(BooksViewModelError) -> BookResponse
 }
 
 protocol LocalDataSource: RemoteDataSource {
-    func save(books: [Book]) async throws (BooksViewModelError)
+    func save(books: [Book]) async throws(BooksViewModelError)
 }
 
 extension Container: @retroactive Then {}
