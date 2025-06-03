@@ -59,7 +59,8 @@ final class BooksViewModel<BooksScreenType: AnyObject & AnyBooksScreen>: BasicVi
         self.screen = screen
     }
 
-    func reloadData() async {
+    override func reloadData() async {
+        await super.reloadData()
         guard let source = dependenciesContainer.resolve(RemoteDataSource.self),
               let localSource = dependenciesContainer.resolve(LocalDataSource.self)
         else {
@@ -83,7 +84,8 @@ final class BooksViewModel<BooksScreenType: AnyObject & AnyBooksScreen>: BasicVi
         }
     }
 
-    func ready() {
+    override func ready() {
+        super.ready()
         searchText.removeDuplicates().sink { [weak screen = self.screen] text in
             _Concurrency.Task { [weak screen] in
                 await screen?.onSearchTextChanged(text)

@@ -41,14 +41,14 @@ struct BooksScreenRootView: View {
         VStack {
             HStack {
                 TextField("", text: $searchText, onEditingChanged: { _ in
-                    self.showCancelButton = true
+                    showCancelButton = true
                 }, onCommit: {})
                     .padding(.leading, LayoutParams.BooksScren.defaultInset)
                     .foregroundStyle(Color(AppColors.textColor))
                 if showCancelButton {
                     Button(L10n.BooksScreen.Button.cancel) {
-                        self.searchText = ""
-                        self.showCancelButton = false
+                        searchText = ""
+                        showCancelButton = false
                     }
                     .foregroundStyle(Color(AppColors.textColor))
                     .padding(.trailing, LayoutParams.BooksScren.defaultInset)

@@ -102,7 +102,7 @@ class BookieTests: XCTestCase {
 private struct TestRemoteDataSource: RemoteDataSource {
     let expected: [Book]
 
-    func search(text _: String) async throws (BooksViewModelError) -> BookResponse {
+    func search(text _: String) async throws(BooksViewModelError) -> BookResponse {
         .init(
             kind: "",
             totalItems: expected.count,

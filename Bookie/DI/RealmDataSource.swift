@@ -29,7 +29,7 @@ struct RealmDataSource: LocalDataSource {
         Realm.Configuration.defaultConfiguration.deleteRealmIfMigrationNeeded = true
     }
 
-    func search(text: String) async throws (BooksViewModelError) -> BookResponse {
+    func search(text: String) async throws(BooksViewModelError) -> BookResponse {
         do {
             return try await Task { @MainActor in
                 let realm = try await Realm()
@@ -75,7 +75,7 @@ struct RealmDataSource: LocalDataSource {
         }
     }
 
-    func save(books: [Book]) async throws (BooksViewModelError) {
+    func save(books: [Book]) async throws(BooksViewModelError) {
         do {
             try await Task { @MainActor in
                 let realm = try await Realm()
