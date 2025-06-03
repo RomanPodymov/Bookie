@@ -1,5 +1,8 @@
 # Bookie
 
+![Bookie main UIKit](https://github.com/RomanPodymov/Bookie/blob/main/Screenshot/main_uikit.png "Bookie main UIKit")
+![Bookie detail UIKit](https://github.com/RomanPodymov/Bookie/blob/main/Screenshot/detail_uikit.png "Bookie detail UIKit")
+
 ### Setup
 
 1. Install Xcode 16.3 or higher.
