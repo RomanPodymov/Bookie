@@ -2,6 +2,8 @@
 
 ![Bookie main UIKit](https://github.com/RomanPodymov/Bookie/blob/main/Screenshot/main_uikit.png "Bookie main UIKit")
 ![Bookie detail UIKit](https://github.com/RomanPodymov/Bookie/blob/main/Screenshot/detail_uikit.png "Bookie detail UIKit")
+![Bookie main SwiftUI](https://github.com/RomanPodymov/Bookie/blob/main/Screenshot/main_swiftui.png "Bookie main SwiftUI")
+![Bookie detail SwiftUI](https://github.com/RomanPodymov/Bookie/blob/main/Screenshot/detail_swiftui.png "Bookie detail SwiftUI")
 
 ### Setup
 
