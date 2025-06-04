@@ -6,9 +6,6 @@
 //  Copyright © 2025 Bookie. All rights reserved.
 //
 
-import DifferenceKit
-import NVActivityIndicatorView
-import NVActivityIndicatorViewExtended
 import Reusable
 import SwiftAlertView
 import UICollectionViewLeftAlignedLayout
@@ -137,7 +134,7 @@ extension BooksScreen: UICollectionViewDelegate {
 extension BooksScreen: AnyBooksScreen {
     func onNewDataReceived(oldSet: DataSetType, newSet: DataSetType) async {
         await MainActor.run { [weak viewModel] in
-            rootView.reload(using: StagedChangeset(source: oldSet, target: newSet)) { [weak viewModel] collection in
+            rootView.reload(using: .init(source: oldSet, target: newSet)) { [weak viewModel] collection in
                 viewModel?.on(newSet: collection)
                 if let previousBook = viewModel?.previousBook, let indexPath = viewModel?.indexPath(for: previousBook) {
                     viewModel?.previousBook = nil

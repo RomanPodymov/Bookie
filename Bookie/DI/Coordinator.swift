@@ -46,7 +46,7 @@ class Coordinator: AnyCoordinator {
         BookScreen(data)
     }
 
-    fileprivate func animateScreenChange() async {
+    private func animateScreenChange() async {
         guard let window else {
             return
         }
