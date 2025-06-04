@@ -6,7 +6,7 @@
 //  Copyright © 2025 Bookie. All rights reserved.
 //
 
-import UIKit
+import SwiftUI
 
 class CoordinatorSwiftUI: Coordinator {
     @MainActor

@@ -6,7 +6,6 @@
 //  Copyright © 2025 Bookie. All rights reserved.
 //
 
-import Fashion
 import Reusable
 import UIKit
 

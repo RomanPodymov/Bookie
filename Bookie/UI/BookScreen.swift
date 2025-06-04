@@ -6,7 +6,6 @@
 //  Copyright © 2025 Bookie. All rights reserved.
 //
 
-import Kingfisher
 import SnapKit
 import SwifterSwift
 import UIKit

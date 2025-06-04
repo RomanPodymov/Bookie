@@ -23,7 +23,20 @@ final class BookSwiftData: Identifiable {
 @available(iOS 17, *)
 @ModelActor
 actor SwiftDataSource: LocalDataSource {
+    private static let container = {
+        let configuration = ModelConfiguration(for: BookSwiftData.self)
+        let schema = Schema([BookSwiftData.self])
+        return try? ModelContainer(for: schema, configurations: [configuration])
+    }()
+
     private var context: ModelContext { modelExecutor.modelContext }
+
+    init?() {
+        guard let container = Self.container else {
+            return nil
+        }
+        self.init(modelContainer: container)
+    }
 
     func search(text: String) async throws(BooksViewModelError) -> BookResponse {
         do {
